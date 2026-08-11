@@ -76,6 +76,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   sidebarLinks.forEach(link => {
     link.addEventListener('click', (e) => {
+      // Liens vers d'autres pages (ex: stats.html) → navigation normale
+      const href = link.getAttribute('href');
+      if (href && href !== '#') return;
       e.preventDefault();
       const page = link.getAttribute('data-page');
 
@@ -746,5 +749,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       alertEl.textContent = t('admin.statsError') + (e && e.message ? e.message : t('common.unknown'));
       alertEl.style.display = 'block';
     }
+  }
+
+  // Ouverture d'une section via hash (ex: index.html#users depuis stats.html)
+  const target = window.location.hash.replace('#', '');
+  if (target) {
+    const link = document.querySelector(`.sidebar-link[data-page="${target}"]`);
+    if (link) setTimeout(() => link.click(), 50);
   }
 });

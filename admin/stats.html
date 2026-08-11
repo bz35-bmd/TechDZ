@@ -1,0 +1,660 @@
+﻿<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistiques — TechDZ Admin</title>
+    <link rel="icon" type="image/svg+xml" href="../logo.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+    <style>
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin-bottom: 28px; }
+        .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 16px; margin-bottom: 28px; }
+        .chart-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 20px; }
+        .chart-card h3 { margin: 0 0 16px; font-size: 0.95rem; font-weight: 700; color: var(--text-primary); }
+        .chart-wrap { position: relative; height: 260px; }
+        .chart-wrap canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
+        .chart-wrap.short { height: 220px; }
+        .filters-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
+        .filters-row input, .filters-row select {
+            padding: 9px 12px; background: var(--bg-secondary); border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm); color: var(--text-primary); font-family: inherit; font-size: 0.85rem;
+        }
+        .filters-row input[type="date"] { color-scheme: dark; }
+        .btn-export {
+            margin-left: auto; display: inline-flex; align-items: center; gap: 6px;
+            padding: 9px 16px; border-radius: var(--radius-sm); background: rgba(16,185,129,0.12);
+            border: 1px solid rgba(16,185,129,0.3); color: #10B981; font-weight: 600; font-size: 0.85rem; cursor: pointer;
+        }
+        .btn-export:hover { background: rgba(16,185,129,0.2); }
+        .sortable { cursor: pointer; user-select: none; }
+        .sortable:hover { color: var(--primary); }
+        .sortable i { font-size: 0.65rem; margin-left: 4px; opacity: 0.6; }
+        .online-now-admin { display: flex; align-items: center; gap: 8px; }
+        .page-tag { display: inline-block; padding: 3px 10px; border-radius: 4px; background: rgba(59,130,246,0.12); color: var(--primary); font-size: 0.75rem; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+        .action-tag { display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 0.72rem; font-weight: 700; }
+        .action-tag.login { background: rgba(16,185,129,0.12); color: #10B981; }
+        .action-tag.logout { background: rgba(239,68,68,0.12); color: var(--red); }
+        .action-tag.heartbeat { background: rgba(59,130,246,0.12); color: var(--primary); }
+        .action-tag.page_view { background: rgba(139,92,246,0.12); color: var(--accent); }
+        .muted { color: var(--text-muted); font-size: 0.85rem; }
+        .user-link { color: var(--primary); cursor: pointer; font-weight: 600; }
+        .user-link:hover { text-decoration: underline; }
+        .user-detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px; }
+        .user-detail-item { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 14px 16px; }
+        .user-detail-item .label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+        .user-detail-item .value { font-size: 1.05rem; font-weight: 700; margin-top: 4px; }
+        .empty-table { text-align: center; padding: 32px; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="../logo.svg" alt="TechDZ">
+                <p>Statistiques &amp; activité</p>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="sidebar-link"><i class="fas fa-chart-pie"></i> Tableau de bord</a>
+                <a href="#" class="sidebar-link active"><i class="fas fa-chart-line"></i> Activité &amp; connexions</a>
+                <a href="index.html#users" class="sidebar-link"><i class="fas fa-users"></i> Utilisateurs</a>
+                <a href="index.html#networking" class="sidebar-link"><i class="fas fa-handshake"></i> Networking</a>
+                <a href="index.html#posts" class="sidebar-link"><i class="fas fa-comments"></i> Forum</a>
+                <a href="index.html#jobs" class="sidebar-link"><i class="fas fa-briefcase"></i> Emplois</a>
+                <a href="index.html#courses" class="sidebar-link"><i class="fas fa-graduation-cap"></i> Formations</a>
+                <a href="index.html#events" class="sidebar-link"><i class="fas fa-calendar-alt"></i> Événements</a>
+                <a href="index.html#news" class="sidebar-link"><i class="fas fa-newspaper"></i> Actualités</a>
+            </nav>
+            <div class="sidebar-footer">
+<div class="theme-picker theme-picker-up">
+    <button class="theme-picker-btn" id="themePickerBtn" aria-label="Choisir le thème" data-i18n-aria="theme.choose" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-palette"></i>
+    </button>
+    <div class="theme-picker-menu" id="themePickerMenu" role="menu">
+        <div class="theme-picker-header" data-i18n="theme.title">Thème du site</div>
+        <button class="theme-option" data-theme-option="code" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-code"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.code">Code</strong><small data-i18n="theme.codeDesc">Encre liquide + &lt;/&gt;</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="signal" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-signal"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.signal">Signal</strong><small data-i18n="theme.signalDesc">Réseau + nœud</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="fusion" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-fusion"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.fusion">Fusion</strong><small data-i18n="theme.fusionDesc">Encre + nœud</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="dunes" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-dunes"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.dunes">Dunes</strong><small data-i18n="theme.dunesDesc">Sahara + réseau or</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="nuit" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-nuit"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.nuit">Nuit</strong><small data-i18n="theme.nuitDesc">Étoiles + réseau indigo</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+    </div>
+</div>
+                <a href="../index.html" style="display:block; margin-bottom:8px; padding:10px 16px; border-radius:8px; color:var(--primary); font-weight:600; font-size:0.9rem; text-decoration:none;">
+                    <i class="fas fa-arrow-left"></i> Retour au site
+                </a>
+                <button class="sidebar-link" id="adminLogoutBtn" style="width:100%; background:none; border:none; cursor:pointer; text-align:left; font-size:inherit; padding:10px 16px; border-radius:8px; color:var(--red); font-weight:600;">
+                    <i class="fas fa-sign-out-alt"></i> Déconnexion
+                </button>
+                <div class="sidebar-user">
+                    <div class="sidebar-avatar" id="sidebarAvatar">A</div>
+                    <div class="sidebar-user-info">
+                        <strong id="sidebarName">Admin</strong>
+                        <span>Administrateur</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN -->
+        <main class="main-content">
+            <div class="alert error" id="statsError" style="display:none;"></div>
+            <div class="page-header">
+                <div>
+                    <h1>Activité &amp; connexions</h1>
+                    <p>Utilisateurs en ligne, statistiques, historique et pages vues</p>
+                </div>
+                <button class="btn btn-primary" id="refreshBtn"><i class="fas fa-sync-alt"></i> Actualiser</button>
+            </div>
+
+            <!-- CARTES VUE D'ENSEMBLE -->
+            <div class="stats-grid" id="overviewGrid">
+                <div class="stat-card"><div class="stat-card-header"><div class="stat-card-icon green"><i class="fas fa-user-check"></i></div></div><div class="stat-card-value" id="statOnlineNow">—</div><div class="stat-card-label">En ligne maintenant</div></div>
+                <div class="stat-card"><div class="stat-card-header"><div class="stat-card-icon teal"><i class="fas fa-arrow-trend-up"></i></div></div><div class="stat-card-value" id="statPeak">—</div><div class="stat-card-label">Pic de connexion aujourd'hui</div></div>
+                <div class="stat-card"><div class="stat-card-header"><div class="stat-card-icon blue"><i class="fas fa-plug"></i></div></div><div class="stat-card-value" id="statConnections">—</div><div class="stat-card-label">Connexions aujourd'hui</div></div>
+                <div class="stat-card"><div class="stat-card-header"><div class="stat-card-icon purple"><i class="fas fa-eye"></i></div></div><div class="stat-card-value" id="statPageViews">—</div><div class="stat-card-label">Pages vues aujourd'hui</div></div>
+                <div class="stat-card"><div class="stat-card-header"><div class="stat-card-icon amber"><i class="fas fa-clock"></i></div></div><div class="stat-card-value" id="statAvgSession">—</div><div class="stat-card-label">Durée moyenne de session</div></div>
+                <div class="stat-card"><div class="stat-card-header"><div class="stat-card-icon red"><i class="fas fa-user-plus"></i></div></div><div class="stat-card-value" id="statNewUsers">—</div><div class="stat-card-label">Nouveaux utilisateurs aujourd'hui</div></div>
+            </div>
+
+            <!-- GRAPHIQUES -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h3><i class="fas fa-signal"></i> Connexions simultanées (24 dernières heures)</h3>
+                    <div class="chart-wrap"><canvas id="chartHourly"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <h3><i class="fas fa-chart-bar"></i> Connexions &amp; pages vues (7 jours)</h3>
+                    <div class="chart-wrap"><canvas id="chartDaily"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <h3><i class="fas fa-chart-pie"></i> Pages les plus visitées (30 jours)</h3>
+                    <div class="chart-wrap short"><canvas id="chartPages"></canvas></div>
+                </div>
+                <div class="chart-card">
+                    <h3><i class="fas fa-users"></i> Utilisateurs inscrits (30 jours)</h3>
+                    <div class="chart-wrap"><canvas id="chartUsers"></canvas></div>
+                </div>
+            </div>
+
+            <!-- UTILISATEURS EN LIGNE -->
+            <div class="table-container" style="margin-bottom:28px;">
+                <div class="table-header">
+                    <h2><i class="fas fa-user-check"></i> Utilisateurs en ligne</h2>
+                    <span class="online-now-admin muted" id="onlineNowCountBadge">— en ligne</span>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="sortable" data-col="full_name">Avatar / Nom <i class="fas fa-sort"></i></th>
+                            <th class="sortable" data-col="city">Ville <i class="fas fa-sort"></i></th>
+                            <th class="sortable" data-col="role">Rôle <i class="fas fa-sort"></i></th>
+                            <th class="sortable" data-col="last_active">Dernière activité <i class="fas fa-sort"></i></th>
+                            <th>Page actuelle</th>
+                        </tr>
+                    </thead>
+                    <tbody id="onlineTableBody">
+                        <tr><td colspan="5" class="empty-table">Chargement...</td></tr>
+                    </tbody>
+                </table>
+                <div class="table-header" style="margin-top:16px;">
+                    <span class="muted">Filtres : ville / rôle</span>
+                </div>
+                <div class="filters-row">
+                    <select id="onlineCityFilter"><option value="">Toutes les villes</option></select>
+                    <select id="onlineRoleFilter"><option value="">Tous les rôles</option><option value="admin">Admin</option><option value="moderator">Modérateur</option><option value="member">Membre</option></select>
+                </div>
+            </div>
+
+            <!-- STATISTIQUES PAR PAGE -->
+            <div class="table-container" style="margin-bottom:28px;">
+                <div class="table-header">
+                    <h2><i class="fas fa-file"></i> Statistiques par page</h2>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Page</th>
+                            <th>Vues</th>
+                            <th>Temps moyen</th>
+                            <th>Taux de rebond</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pageStatsBody">
+                        <tr><td colspan="4" class="empty-table">Chargement...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- HISTORIQUE DES CONNEXIONS -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h2><i class="fas fa-history"></i> Historique des connexions</h2>
+                    <button class="btn-export" id="exportCsvBtn"><i class="fas fa-file-csv"></i> Exporter CSV</button>
+                </div>
+                <div class="filters-row">
+                    <input type="date" id="logDateFilter" title="Filtrer par date">
+                    <input type="text" id="logUserFilter" placeholder="Rechercher un utilisateur..." title="Nom ou email">
+                    <select id="logActionFilter">
+                        <option value="">Toutes les actions</option>
+                        <option value="login">Connexion</option>
+                        <option value="logout">Déconnexion</option>
+                        <option value="heartbeat">Heartbeat</option>
+                        <option value="page_view">Page vue</option>
+                    </select>
+                    <button class="btn btn-outline" id="logFiltersReset">Réinitialiser</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date / heure</th>
+                            <th>Utilisateur</th>
+                            <th>Action</th>
+                            <th>Page</th>
+                            <th>Adresse IP</th>
+                            <th>Navigateur</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logsTableBody">
+                        <tr><td colspan="6" class="empty-table">Chargement...</td></tr>
+                    </tbody>
+                </table>
+                <div class="table-pagination">
+                    <span id="logsInfo">0 entrées</span>
+                    <div class="pagination-btns" id="logsPagination"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL: FICHE UTILISATEUR -->
+    <div class="modal-overlay" id="modalUserDetail">
+        <div class="modal" style="max-width:640px;">
+            <button class="modal-close" onclick="document.getElementById('modalUserDetail').classList.remove('open')"><i class="fas fa-times"></i></button>
+            <h2 id="userDetailName">Utilisateur</h2>
+            <div class="user-detail-grid" id="userDetailStats"></div>
+            <h3 style="font-size:0.95rem; margin-bottom:12px;">Historique de connexions</h3>
+            <table>
+                <thead>
+                    <tr><th>Date / heure</th><th>Action</th><th>Page</th></tr>
+                </thead>
+                <tbody id="userDetailLogsBody"><tr><td colspan="3" class="empty-table">Chargement...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="../config.js"></script>
+    <script src="../auth.js?v=20260807"></script>
+    <script src="../db.js?v=20260807"></script>
+    <script>
+        (async () => {
+            Auth.init();
+
+            // Garde : page réservée aux admins
+            const { user } = await Auth.getUser();
+            if (!user) { window.location.href = 'login.html'; return; }
+            const { data: profile } = await Auth.getProfile(user.id);
+            if (!profile || profile.role !== 'admin') {
+                window.location.href = 'login.html';
+                return;
+            }
+            document.getElementById('sidebarName').textContent = profile.full_name || 'Admin';
+            document.getElementById('sidebarAvatar').textContent = (profile.full_name || 'A')[0].toUpperCase();
+            document.getElementById('adminLogoutBtn').addEventListener('click', async () => {
+                await Auth.signOut(null);
+                window.location.href = 'login.html';
+            });
+
+            const $ = id => document.getElementById(id);
+            const themeColor = (cssVar, fallback) => {
+                const v = getComputedStyle(document.documentElement).getPropertyValue(cssVar).trim();
+                return v || fallback;
+            };
+            const fmtDate = d => new Date(d).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            const fmtShort = d => new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
+            const fmtDuration = sec => {
+                sec = Math.round(sec || 0);
+                if (sec < 60) return sec + ' s';
+                if (sec < 3600) return Math.floor(sec / 60) + ' min';
+                return Math.floor(sec / 3600) + ' h ' + Math.floor((sec % 3600) / 60) + ' min';
+            };
+            const initials = name => (name || 'U').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+            const safe = (v, fb = '—') => (v === null || v === undefined || v === '') ? fb : v;
+            const esc = s => String(s === null || s === undefined ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+            let todayStats = null;
+            let onlineUsers = [];
+
+            // ==========================================
+            // Vue d'ensemble
+            // ==========================================
+            async function loadOverview() {
+                const { data } = await DB.getTodayStats();
+                if (!data || !data[0]) return;
+                todayStats = data[0];
+                $('statOnlineNow').textContent = todayStats.online_now;
+                $('statPeak').textContent = todayStats.peak_today;
+                $('statConnections').textContent = todayStats.connections_today;
+                $('statPageViews').textContent = todayStats.page_views_today;
+                $('statAvgSession').textContent = fmtDuration(todayStats.avg_session_sec);
+                $('statNewUsers').textContent = todayStats.new_users_today;
+            }
+
+            // ==========================================
+            // Graphiques
+            // ==========================================
+            const palette = ['#3B82F6', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#06B6D4', '#EC4899', '#84CC16', '#F97316', '#14B8A6'];
+
+            function fillHours(data) {
+                const map = new Map((data || []).map(r => [new Date(r.hour).getTime(), r.active_users]));
+                const out = [];
+                const now = new Date();
+                now.setMinutes(0, 0, 0);
+                for (let i = 23; i >= 0; i--) {
+                    const t = now.getTime() - i * 3600000;
+                    out.push({ hour: t, active_users: map.get(t) || 0 });
+                }
+                return out;
+            }
+
+            async function loadHourlyChart() {
+                const { data } = await DB.getHourlyActive(24);
+                const rows = fillHours(data);
+                const gridColor = themeColor('--border-color', 'rgba(148,163,184,0.15)');
+                const primary = themeColor('--primary', '#3B82F6');
+                new Chart($('chartHourly'), {
+                    type: 'line',
+                    data: {
+                        labels: rows.map(r => new Date(r.hour).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })),
+                        datasets: [{
+                            label: 'Utilisateurs actifs',
+                            data: rows.map(r => r.active_users),
+                            borderColor: primary,
+                            backgroundColor: 'rgba(59,130,246,0.12)',
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 2,
+                            pointHitRadius: 12
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { grid: { color: gridColor }, ticks: { color: '#94A3B8', maxRotation: 45, autoSkip: true, maxTicksLimit: 12 } },
+                            y: { grid: { color: gridColor }, ticks: { color: '#94A3B8', precision: 0 }, beginAtZero: true }
+                        }
+                    }
+                });
+            }
+
+            async function loadDailyChart() {
+                const { data } = await DB.getDailyTotals(7);
+                new Chart($('chartDaily'), {
+                    type: 'bar',
+                    data: {
+                        labels: (data || []).map(r => fmtShort(r.day)),
+                        datasets: [
+                            { label: 'Connexions', data: (data || []).map(r => r.connections), backgroundColor: 'rgba(59,130,246,0.75)', borderRadius: 6 },
+                            { label: 'Pages vues', data: (data || []).map(r => r.page_views), backgroundColor: 'rgba(139,92,246,0.75)', borderRadius: 6 }
+                        ]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { labels: { color: '#94A3B8' } } },
+                        scales: {
+                            x: { grid: { display: false }, ticks: { color: '#94A3B8' } },
+                            y: { grid: { color: themeColor('--border-color', 'rgba(148,163,184,0.15)') }, ticks: { color: '#94A3B8', precision: 0 }, beginAtZero: true }
+                        }
+                    }
+                });
+            }
+
+            async function loadPagesChart() {
+                const { data } = await DB.getPageDistribution(30);
+                const rows = data || [];
+                const top = rows.slice(0, 8);
+                const rest = rows.slice(8).reduce((s, r) => s + r.views, 0);
+                if (rest > 0) top.push({ page: 'Autres', views: rest });
+                new Chart($('chartPages'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: top.map(r => r.page),
+                        datasets: [{ data: top.map(r => r.views), backgroundColor: palette, borderColor: '#0B1120', borderWidth: 2 }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { position: 'right', labels: { color: '#94A3B8', boxWidth: 12 } } },
+                        cutout: '58%'
+                    }
+                });
+            }
+
+            async function loadUsersChart() {
+                const { data } = await DB.getCumulativeUsers(30);
+                new Chart($('chartUsers'), {
+                    type: 'line',
+                    data: {
+                        labels: (data || []).map(r => fmtShort(r.day)),
+                        datasets: [{
+                            label: 'Utilisateurs inscrits',
+                            data: (data || []).map(r => r.total_users),
+                            borderColor: '#10B981',
+                            backgroundColor: 'rgba(16,185,129,0.12)',
+                            fill: true,
+                            tension: 0.35,
+                            pointRadius: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { grid: { display: false }, ticks: { color: '#94A3B8', maxTicksLimit: 10 } },
+                            y: { grid: { color: themeColor('--border-color', 'rgba(148,163,184,0.15)') }, ticks: { color: '#94A3B8', precision: 0 }, beginAtZero: true }
+                        }
+                    }
+                });
+            }
+
+            // ==========================================
+            // Utilisateurs en ligne (tableau + filtres + tri)
+            // ==========================================
+            let onlineSort = { col: 'last_active', asc: false };
+
+            async function loadOnlineUsers() {
+                const { data, error } = await DB.getOnlineUsersDetailed();
+                if (error || !data) { $('onlineTableBody').innerHTML = `<tr><td colspan="5" class="empty-table">Aucun utilisateur en ligne</td></tr>`; return; }
+                onlineUsers = data;
+                $('onlineNowCountBadge').textContent = data.length + ' en ligne';
+                const cities = [...new Set(data.map(u => u.city).filter(Boolean))].sort();
+                $('onlineCityFilter').innerHTML = '<option value="">Toutes les villes</option>' + cities.map(c => `<option value="${c}">${c}</option>`).join('');
+                renderOnlineTable();
+            }
+
+            function renderOnlineTable() {
+                let rows = [...onlineUsers];
+                const city = $('onlineCityFilter').value;
+                const role = $('onlineRoleFilter').value;
+                if (city) rows = rows.filter(u => u.city === city);
+                if (role) rows = rows.filter(u => u.role === role);
+                const { col, asc } = onlineSort;
+                rows.sort((a, b) => {
+                    let x = a[col], y = b[col];
+                    if (col === 'last_active') { x = new Date(x).getTime(); y = new Date(y).getTime(); }
+                    if (x === null || x === undefined) return 1;
+                    if (y === null || y === undefined) return -1;
+                    return (x < y ? -1 : x > y ? 1 : 0) * (asc ? 1 : -1);
+                });
+                if (!rows.length) {
+                    $('onlineTableBody').innerHTML = `<tr><td colspan="5" class="empty-table">Aucun utilisateur en ligne</td></tr>`;
+                    return;
+                }
+                const roleLabel = r => r === 'admin' ? 'Admin' : r === 'moderator' ? 'Modérateur' : 'Membre';
+                $('onlineTableBody').innerHTML = rows.map(u => `
+                    <tr>
+                        <td>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <div class="sidebar-avatar" style="width:34px;height:34px;font-size:0.75rem;">${initials(u.full_name)}</div>
+                                <div>
+                                    <div class="user-link" onclick="window.openUserDetail('${u.id}', '${esc(u.full_name || '')}')">${esc(u.full_name || '—')}</div>
+                                    <div class="muted">${esc(u.job_title || '')}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${safe(u.city)}</td>
+                        <td><span class="action-tag ${u.role === 'admin' ? 'login' : u.role === 'moderator' ? 'heartbeat' : 'page_view'}">${roleLabel(u.role)}</span></td>
+                        <td>${fmtDate(u.last_active)}</td>
+                        <td>${u.current_page ? `<span class="page-tag">${esc(u.current_page)}</span>` : '—'}</td>
+                    </tr>`).join('');
+            }
+
+            document.querySelectorAll('th.sortable[data-col]').forEach(th => {
+                th.addEventListener('click', () => {
+                    const col = th.dataset.col;
+                    if (!col) return;
+                    onlineSort.asc = onlineSort.col === col ? !onlineSort.asc : true;
+                    onlineSort.col = col;
+                    renderOnlineTable();
+                });
+            });
+            $('onlineCityFilter').addEventListener('change', renderOnlineTable);
+            $('onlineRoleFilter').addEventListener('change', renderOnlineTable);
+
+            // ==========================================
+            // Statistiques par page
+            // ==========================================
+            async function loadPageStats() {
+                const { data } = await DB.getPageStats();
+                const rows = data || [];
+                if (!rows.length) { $('pageStatsBody').innerHTML = `<tr><td colspan="4" class="empty-table">Aucune donnée</td></tr>`; return; }
+                $('pageStatsBody').innerHTML = rows.map(r => `
+                    <tr>
+                        <td><span class="page-tag">${esc(r.page)}</span></td>
+                        <td>${r.views}</td>
+                        <td>${fmtDuration(r.avg_session_sec)}</td>
+                        <td>${r.bounce_rate}%</td>
+                    </tr>`).join('');
+            }
+
+            // ==========================================
+            // Historique des connexions (pagination + filtres + CSV)
+            // ==========================================
+            let logPage = 1;
+            const LOG_LIMIT = 50;
+
+            async function loadLogs() {
+                const date = $('logDateFilter').value;
+                const search = $('logUserFilter').value.trim();
+                const action = $('logActionFilter').value;
+                const { data, count } = await DB.getConnectionLogs({ page: logPage, limit: LOG_LIMIT, date, userId: null, action, search });
+                const tbody = $('logsTableBody');
+                if (!data || !data.length) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="empty-table">Aucune entrée</td></tr>`;
+                } else {
+                    const actionLabel = a => ({ login: 'Connexion', logout: 'Déconnexion', heartbeat: 'Heartbeat', page_view: 'Page vue' })[a] || a;
+                    tbody.innerHTML = data.map(l => `
+                        <tr>
+                            <td class="muted">${fmtDate(l.created_at)}</td>
+                            <td>${l.user ? `<span class="user-link" onclick="window.openUserDetail('${l.user_id}', '${esc(l.user.full_name || '')}')">${esc(l.user.full_name || '—')}</span>` : '—'}</td>
+                            <td><span class="action-tag ${l.action}">${actionLabel(l.action)}</span></td>
+                            <td>${l.page ? `<span class="page-tag">${esc(l.page)}</span>` : '—'}</td>
+                            <td class="muted">${l.ip_address || '—'}</td>
+                            <td class="muted" style="max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${esc(l.user_agent || '')}">${l.user_agent ? l.user_agent.split(')')[0] + ')' : '—'}</td>
+                        </tr>`).join('');
+                }
+                $('logsInfo').textContent = `${count || 0} entrées`;
+                renderLogPagination(count || 0);
+            }
+
+            function renderLogPagination(total) {
+                const pages = Math.max(1, Math.ceil(total / LOG_LIMIT));
+                const wrap = $('logsPagination');
+                const btn = (label, page, disabled, active) =>
+                    `<button class="btn btn-outline btn-sm" style="padding:6px 12px;" ${disabled ? 'disabled' : ''} onclick="window.goLogPage(${page})">${label}</button>`;
+                let html = btn('‹ Précédent', logPage - 1, logPage <= 1);
+                html += `<span class="muted" style="padding:0 10px;">${logPage} / ${pages}</span>`;
+                html += btn('Suivant ›', logPage + 1, logPage >= pages);
+                wrap.innerHTML = html;
+            }
+
+            window.goLogPage = (p) => { logPage = p; loadLogs(); };
+
+            $('logDateFilter').addEventListener('change', () => { logPage = 1; loadLogs(); });
+            let userFilterTimeout;
+            $('logUserFilter').addEventListener('input', () => {
+                clearTimeout(userFilterTimeout);
+                userFilterTimeout = setTimeout(() => { logPage = 1; loadLogs(); }, 400);
+            });
+            $('logActionFilter').addEventListener('change', () => { logPage = 1; loadLogs(); });
+            $('logFiltersReset').addEventListener('click', () => {
+                $('logDateFilter').value = ''; $('logUserFilter').value = ''; $('logActionFilter').value = '';
+                logPage = 1; loadLogs();
+            });
+
+            // Export CSV
+            $('exportCsvBtn').addEventListener('click', async () => {
+                const date = $('logDateFilter').value;
+                const search = $('logUserFilter').value.trim();
+                const action = $('logActionFilter').value;
+                let all = [];
+                const { data } = await DB.getConnectionLogs({ page: 1, limit: 1000, date, action, search });
+                all = data || [];
+                const escCsv = s => '"' + String(s === null || s === undefined ? '' : s).replace(/"/g, '""') + '"';
+                const lines = [['Date', 'Utilisateur', 'Action', 'Page', 'IP', 'User agent'].map(escCsv).join(';')];
+                all.forEach(l => lines.push([
+                    new Date(l.created_at).toISOString(),
+                    l.user ? l.user.full_name : '',
+                    l.action,
+                    l.page || '',
+                    l.ip_address || '',
+                    l.user_agent || ''
+                ].map(escCsv).join(';')));
+                const blob = new Blob(['\ufeff' + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'connection-logs-' + new Date().toISOString().slice(0, 10) + '.csv';
+                a.click();
+                URL.revokeObjectURL(a.href);
+            });
+
+            // ==========================================
+            // Fiche utilisateur (modal)
+            // ==========================================
+            window.openUserDetail = async (userId, name) => {
+                $('userDetailName').textContent = name || 'Utilisateur';
+                $('modalUserDetail').classList.add('open');
+                $('userDetailStats').innerHTML = '<div class="muted">Chargement...</div>';
+                $('userDetailLogsBody').innerHTML = '<tr><td colspan="3" class="empty-table">Chargement...</td></tr>';
+                const { data } = await DB.getUserStats(userId);
+                if (data && data[0]) {
+                    const s = data[0];
+                    $('userDetailStats').innerHTML = `
+                        <div class="user-detail-item"><div class="label">Visites</div><div class="value">${s.total_visits}</div></div>
+                        <div class="user-detail-item"><div class="label">Pages visitées</div><div class="value">${s.pages_visited}</div></div>
+                        <div class="user-detail-item"><div class="label">Durée moyenne de session</div><div class="value">${fmtDuration(s.avg_session_sec)}</div></div>
+                        <div class="user-detail-item"><div class="label">Première activité</div><div class="value" style="font-size:0.85rem;">${s.first_activity ? fmtDate(s.first_activity) : '—'}</div></div>
+                        <div class="user-detail-item"><div class="label">Dernière activité</div><div class="value" style="font-size:0.85rem;">${s.last_activity ? fmtDate(s.last_activity) : '—'}</div></div>
+                        <div class="user-detail-item"><div class="label">Événements totaux</div><div class="value">${s.total_events}</div></div>`;
+                }
+                const { data: logs } = await DB.getUserLogs(userId, { page: 1, limit: 15 });
+                if (!logs || !logs.length) {
+                    $('userDetailLogsBody').innerHTML = '<tr><td colspan="3" class="empty-table">Aucun historique</td></tr>';
+                } else {
+                    const actionLabel = a => ({ login: 'Connexion', logout: 'Déconnexion', heartbeat: 'Heartbeat', page_view: 'Page vue' })[a] || a;
+                    $('userDetailLogsBody').innerHTML = logs.map(l => `
+                        <tr>
+                            <td class="muted">${fmtDate(l.created_at)}</td>
+                            <td><span class="action-tag ${l.action}">${actionLabel(l.action)}</span></td>
+                            <td>${l.page ? `<span class="page-tag">${esc(l.page)}</span>` : '—'}</td>
+                        </tr>`).join('');
+                }
+            };
+
+            // ==========================================
+            // Chargement initial + refresh
+            // ==========================================
+            async function loadAll() {
+                $('statsError').style.display = 'none';
+                try {
+                    await Promise.all([loadOverview(), loadOnlineUsers(), loadPageStats(), loadLogs()]);
+                    loadHourlyChart(); loadDailyChart(); loadPagesChart(); loadUsersChart();
+                } catch (e) {
+                    console.error('Stats error:', e);
+                    $('statsError').textContent = 'Erreur de chargement des statistiques : ' + e.message;
+                    $('statsError').style.display = 'block';
+                }
+            }
+
+            $('refreshBtn').addEventListener('click', loadAll);
+            loadAll();
+        })();
+    </script>
+<script src="../assets/themes.js" defer data-base="../"></script>
+</body>
+</html>

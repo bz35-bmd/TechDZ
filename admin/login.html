@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="fr" data-theme="dark">
+﻿<!DOCTYPE html>
+<html lang="fr" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +12,40 @@
     <link rel="stylesheet" href="admin.css">
 </head>
 <body class="login-page">
-    <div class="login-container">
+    <div class="theme-picker theme-picker-fixed">
+    <button class="theme-picker-btn" id="themePickerBtn" aria-label="Choisir le thème" data-i18n-aria="theme.choose" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-palette"></i>
+    </button>
+    <div class="theme-picker-menu" id="themePickerMenu" role="menu">
+        <div class="theme-picker-header" data-i18n="theme.title">Thème du site</div>
+        <button class="theme-option" data-theme-option="code" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-code"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.code">Code</strong><small data-i18n="theme.codeDesc">Encre liquide + &lt;/&gt;</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="signal" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-signal"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.signal">Signal</strong><small data-i18n="theme.signalDesc">Réseau + nœud</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="fusion" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-fusion"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.fusion">Fusion</strong><small data-i18n="theme.fusionDesc">Encre + nœud</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="dunes" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-dunes"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.dunes">Dunes</strong><small data-i18n="theme.dunesDesc">Sahara + réseau or</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="nuit" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-nuit"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.nuit">Nuit</strong><small data-i18n="theme.nuitDesc">Étoiles + réseau indigo</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+    </div>
+</div>
+<div class="login-container">
         <div class="login-card">
             <div class="login-header">
                 <img src="../logo.svg" alt="TechDZ" height="32">
@@ -29,6 +62,7 @@
                     <label for="password"><span data-i18n="common.password">Mot de passe</span></label>
                     <input type="password" id="password" placeholder="••••••••" required>
                 </div>
+                <div id="turnstile-widget"></div>
                 <button type="submit" class="btn btn-primary btn-full" id="loginBtn">
                     <i class="fas fa-sign-in-alt"></i> <span data-i18n="common.signin">Se connecter</span>
                 </button>
@@ -44,9 +78,10 @@
         </div>
     </div>
 
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="../config.js"></script>
-    <script src="../translations.js"></script>
+    <script src="../auth.js?v=20260807"></script>
     <script>
         (function () {
             const params = new URLSearchParams(window.location.search);
@@ -71,7 +106,7 @@
             };
         })();
     </script>
-    <script src="../auth.js"></script>
+    <script src="../db.js?v=20260807"></script>
     <script>
         Auth.init();
 
@@ -87,18 +122,95 @@
             }
         });
 
+        // ==========================================
+        // Cloudflare Turnstile — protection anti-bots
+        // ==========================================
+        let captchaToken = null;
+        let captchaReady = false;
+        window.__turnstileWidgetId = null;
+        window.turnstileCallback = (token) => { captchaToken = token; };
+        window.turnstileExpiredCallback = () => { captchaToken = null; };
+        window.turnstileErrorCallback = () => { captchaToken = null; captchaReady = false; };
+
+        // Le captcha n'est exigé que si une vraie Site Key est configurée
+        function turnstileEnabled() {
+            return !!window.TURNSTILE_SITE_KEY && !window.TURNSTILE_SITE_KEY.startsWith('VOTRE_');
+        }
+
+        function waitForTurnstile(timeoutMs) {
+            return new Promise((resolve) => {
+                const start = Date.now();
+                const check = () => {
+                    if (window.turnstile && typeof window.turnstile.render === 'function') return resolve(true);
+                    if (Date.now() - start > timeoutMs) return resolve(false);
+                    setTimeout(check, 100);
+                };
+                check();
+            });
+        }
+
+        // Recharger le script API s'il a échoué (réseau lent, blocage temporaire…)
+        function reloadTurnstileScript() {
+            const s = document.createElement('script');
+            s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+            s.async = true;
+            document.head.appendChild(s);
+        }
+
+        function renderTurnstile() {
+            const id = Auth.renderTurnstile();
+            captchaReady = !!id;
+            if (!id) {
+                alertError.textContent = t('captcha.loadError');
+                alertError.style.display = 'block';
+            }
+        }
+
+        async function initTurnstile() {
+            if (!turnstileEnabled()) return;
+            let loaded = await waitForTurnstile(8000);
+            if (!loaded) reloadTurnstileScript();
+            loaded = await waitForTurnstile(8000);
+            if (!loaded) {
+                // API indisponible (réseau) : on ne bloque pas le formulaire et
+                // on réessaie en arrière-plan dès que l'API est accessible.
+                console.warn('Turnstile API unavailable — captcha temporarily skipped');
+                const retry = setInterval(() => {
+                    if (window.turnstile && typeof window.turnstile.render === 'function') {
+                        clearInterval(retry);
+                        renderTurnstile();
+                        if (alertError.style.display === 'block') alertError.style.display = 'none';
+                    }
+                }, 2000);
+                setTimeout(() => clearInterval(retry), 30000);
+                return;
+            }
+            renderTurnstile();
+        }
+
+        initTurnstile();
+
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
 
+            // Turnstile requis mais non validé → bloquer la soumission
+            if (turnstileEnabled()) {
+                if (!captchaReady) { alertError.textContent = t('captcha.loading'); alertError.style.display = 'block'; return; }
+                if (!captchaToken) { alertError.textContent = t('captcha.complete'); alertError.style.display = 'block'; return; }
+            }
+
             loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + t('admin.connecting');
             loginBtn.disabled = true;
             alertError.style.display = 'none';
 
-            const { data, error } = await Auth.signIn(email, password);
+            const { data, error } = await Auth.signIn(email, password, captchaToken);
 
             if (error) {
+                // Token consommé ou invalide → régénérer le captcha
+                captchaToken = null;
+                Auth.resetCaptcha();
                 alertError.textContent = error.message.includes('Invalid login') ? t('admin.loginError') : error.message;
                 alertError.style.display = 'block';
                 loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> ' + t('common.signin');
@@ -108,6 +220,8 @@
 
             const isAdmin = await Auth.isAdmin(data.user.id);
             if (!isAdmin) {
+                captchaToken = null;
+                Auth.resetCaptcha();
                 alertError.textContent = t('admin.notAdmin');
                 alertError.style.display = 'block';
                 await Auth.signOut();
@@ -116,8 +230,11 @@
                 return;
             }
 
+            captchaToken = null;
+            Auth.resetCaptcha();
             window.location.href = 'index.html';
         });
     </script>
+<script src="../assets/themes.js" defer data-base="../"></script>
 </body>
 </html>
