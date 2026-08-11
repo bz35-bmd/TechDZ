@@ -11,8 +11,22 @@
     "nav.join": "Rejoindre",
     "nav.login": "Se connecter",
 
+    // Thème
+    "theme.title": "Thème du site",
+    "theme.choose": "Choisir le thème",
+    "theme.code": "Code",
+    "theme.signal": "Signal",
+    "theme.fusion": "Fusion",
+    "theme.dunes": "Dunes",
+    "theme.nuit": "Nuit",
+    "theme.codeDesc": "Éditeur + réseau",
+    "theme.signalDesc": "Réseau pur",
+    "theme.fusionDesc": "Encre + réseau",
+    "theme.dunesDesc": "Sahara + réseau or",
+    "theme.nuitDesc": "Étoiles + réseau indigo",
+
     // Hero
-    "hero.badge": "+5,000 informaticiens nous ont rejoints",
+    "hero.badge": "informaticiens nous ont rejoints",
     "hero.title1": "La communauté IT",
     "hero.title2": "de l'Algérie",
     "hero.desc": "Que vous soyez développeur, administrateur réseau, analyste de données, chef de projet IT, designer UI/UX, administrateur système ou spécialiste en cybersécurité — TechDZ est votre espace pour échanger, apprendre et progresser. Forum, emplois, formations et actualités — tout est ici.",
@@ -21,6 +35,16 @@
     "hero.stat1": "Membres",
     "hero.stat2": "Discussions",
     "hero.stat3": "Offres d'emploi",
+
+    // Animation du hero
+    "heroanim.title": "Animation du hero",
+    "heroanim.choose": "Choisir l'animation du hero",
+    "heroanim.minimal": "Minimal",
+    "heroanim.minimalDesc": "Entrée en cascade",
+    "heroanim.network": "Network",
+    "heroanim.networkDesc": "Le réseau se tisse",
+    "heroanim.signal": "Signal",
+    "heroanim.signalDesc": "Le flux circule",
 
     // Features
     "features.badge": "Fonctionnalités",
@@ -346,6 +370,7 @@
     "common.admin": "Administrateur",
     "common.moderator": "Modérateur",
     "common.member": "Membre",
+    "common.since": "Membre depuis",
     "common.algeria": "Algérie",
     "common.back": "Retour",
     "common.signin": "Se connecter",
@@ -401,12 +426,19 @@
     "register.success": "Inscription réussie ! Un email de confirmation a été envoyé à {email}. Cliquez sur le lien dans l'email pour activer votre compte.",
 
     // Reset password
+    "reset.email": "Email",
+    "reset.emailPlaceholder": "votre@email.com",
     "reset.title": "Mot de passe oublié ?",
     "reset.subtitle": "Entrez votre email pour recevoir un lien de réinitialisation",
     "reset.sent": "Si un compte existe avec cet email, un lien de réinitialisation vient d'être envoyé. Vérifiez votre boîte mail (pensez aux spams).",
     "reset.tooMany": "Trop de demandes. Attendez une heure avant de réessayer.",
     "reset.send": "Envoyer le lien",
     "reset.remember": "Vous vous souvenez de votre mot de passe ?",
+
+    // Captcha
+    "captcha.loading": "Vérification de sécurité en cours…",
+    "captcha.complete": "Veuillez compléter le captcha",
+    "captcha.loadError": "Impossible de charger le captcha de sécurité. Rechargez la page ou réessayez plus tard.",
 
     // Change password
     "change.verifying": "Vérification de votre lien...",
@@ -497,6 +529,20 @@
     "networking.foundMany": "membres trouvés",
     "networking.empty": "Aucun membre trouvé",
     "networking.emptyDomain": "Aucun membre trouvé avec ce domaine",
+
+    // En ligne / présence
+    "online.badge": "En direct",
+    "online.title": "Communauté",
+    "online.title2": "en ligne",
+    "online.members": "membres en ligne",
+    "online.member": "membre en ligne",
+    "online.first": "Soyez le premier à vous connecter !",
+    "online.others": "autres",
+    "online.cta": "Voir tous les membres",
+    "online.now": "En ligne maintenant",
+    "online.online": "En ligne",
+    "online.offline": "Hors ligne",
+    "online.justConnected": "{name} vient de se connecter",
     "training.enrolled": "Inscription enregistrée avec succès !",
     "profile.updated": "Mot de passe mis à jour !",
     "profile.itSpecialist": "Informaticien",
@@ -509,6 +555,7 @@
     "admin.title": "Admin Dashboard — TechDZ",
     "admin.panel": "Panneau d'administration",
     "admin.dashboard": "Tableau de bord",
+    "admin.stats": "Statistiques",
     "admin.users": "Utilisateurs",
     "admin.networking": "Networking",
     "admin.forum": "Forum",
@@ -667,8 +714,22 @@
     "nav.join": "Join",
     "nav.login": "Login",
 
+    // Theme
+    "theme.title": "Site theme",
+    "theme.choose": "Choose theme",
+    "theme.code": "Code",
+    "theme.signal": "Signal",
+    "theme.fusion": "Fusion",
+    "theme.dunes": "Dunes",
+    "theme.nuit": "Night",
+    "theme.codeDesc": "Editor + network",
+    "theme.signalDesc": "Pure network",
+    "theme.fusionDesc": "Ink + network",
+    "theme.dunesDesc": "Sahara + gold network",
+    "theme.nuitDesc": "Stars + indigo network",
+
     // Hero
-    "hero.badge": "+5,000 IT professionals have joined us",
+    "hero.badge": "IT professionals have joined us",
     "hero.title1": "The IT Community",
     "hero.title2": "of Algeria",
     "hero.desc": "Whether you're a developer, network administrator, data analyst, IT project manager, UI/UX designer, system administrator or cybersecurity specialist — TechDZ is your space to exchange, learn and grow. Forum, jobs, training and news — everything is here.",
@@ -677,6 +738,16 @@
     "hero.stat1": "Members",
     "hero.stat2": "Discussions",
     "hero.stat3": "Job Offers",
+
+    // Hero animation
+    "heroanim.title": "Hero animation",
+    "heroanim.choose": "Choose hero animation",
+    "heroanim.minimal": "Minimal",
+    "heroanim.minimalDesc": "Cascade reveal",
+    "heroanim.network": "Network",
+    "heroanim.networkDesc": "The network weaves",
+    "heroanim.signal": "Signal",
+    "heroanim.signalDesc": "The flow circulates",
 
     // Features
     "features.badge": "Features",
@@ -1002,6 +1073,7 @@
     "common.admin": "Administrator",
     "common.moderator": "Moderator",
     "common.member": "Member",
+    "common.since": "Member since",
     "common.algeria": "Algeria",
     "common.back": "Back",
     "common.signin": "Sign in",
@@ -1057,12 +1129,19 @@
     "register.success": "Registration successful! A confirmation email has been sent to {email}. Click the link in the email to activate your account.",
 
     // Reset password
+    "reset.email": "Email",
+    "reset.emailPlaceholder": "your@email.com",
     "reset.title": "Forgot password?",
     "reset.subtitle": "Enter your email to receive a reset link",
     "reset.sent": "If an account exists with this email, a reset link has just been sent. Check your inbox (don't forget spam).",
     "reset.tooMany": "Too many requests. Wait one hour before trying again.",
     "reset.send": "Send the link",
     "reset.remember": "Remember your password?",
+
+    // Captcha
+    "captcha.loading": "Security check in progress…",
+    "captcha.complete": "Please complete the captcha",
+    "captcha.loadError": "Unable to load the security captcha. Reload the page or try again later.",
 
     // Change password
     "change.verifying": "Verifying your link...",
@@ -1153,6 +1232,20 @@
     "networking.foundMany": "members found",
     "networking.empty": "No member found",
     "networking.emptyDomain": "No member found with this field",
+
+    // Online presence
+    "online.badge": "Live",
+    "online.title": "Community",
+    "online.title2": "online",
+    "online.members": "members online",
+    "online.member": "member online",
+    "online.first": "Be the first to connect!",
+    "online.others": "others",
+    "online.cta": "See all members",
+    "online.now": "Online now",
+    "online.online": "Online",
+    "online.offline": "Offline",
+    "online.justConnected": "{name} just connected",
     "training.enrolled": "Registration saved successfully!",
     "profile.updated": "Password updated!",
     "profile.itSpecialist": "IT Specialist",
@@ -1165,6 +1258,7 @@
     "admin.title": "Admin Dashboard — TechDZ",
     "admin.panel": "Admin panel",
     "admin.dashboard": "Dashboard",
+    "admin.stats": "Statistics",
     "admin.users": "Users",
     "admin.networking": "Networking",
     "admin.forum": "Forum",
@@ -1323,8 +1417,22 @@
     "nav.join": "انضم",
     "nav.login": "تسجيل الدخول",
 
+    // السمة
+    "theme.title": "مظهر الموقع",
+    "theme.choose": "اختر المظهر",
+    "theme.code": "الرمز",
+    "theme.signal": "الإشارة",
+    "theme.fusion": "الاندماج",
+    "theme.dunes": "الكثبان",
+    "theme.nuit": "الليل",
+    "theme.codeDesc": "محرر + شبكة",
+    "theme.signalDesc": "شبكة نقية",
+    "theme.fusionDesc": "حبر + شبكة",
+    "theme.dunesDesc": "صحراء + شبكة ذهبية",
+    "theme.nuitDesc": "نجوم + شبكة نيلي",
+
     // Hero
-    "hero.badge": "+5,000 معلوماتي انضموا إلينا",
+    "hero.badge": "معلوماتي انضموا إلينا",
     "hero.title1": "مجتمع تكنولوجيا المعلومات",
     "hero.title2": "في الجزائر",
     "hero.desc": " سواء كنت مطوراً أو مسؤولاً عن الشبكات أو محلل بيانات أو مدير مشاريع تكنولوجية أو مصمم واجهات أو مسؤولاً عن الأنظمة أو متخصصاً في الأمن السيبراني — TechDZ هو مكانك للتبادل والتعلم والتقدم. المنتدى والوظائف والتكوين والأخبار — كل شيء هنا.",
@@ -1333,6 +1441,16 @@
     "hero.stat1": "أعضاء",
     "hero.stat2": "مناقشات",
     "hero.stat3": "عرض وظائف",
+
+    // حركة الصفحة الرئيسية
+    "heroanim.title": "حركة الصفحة الرئيسية",
+    "heroanim.choose": "اختر حركة الصفحة الرئيسية",
+    "heroanim.minimal": "بسيطة",
+    "heroanim.minimalDesc": "ظهور متتالي",
+    "heroanim.network": "شبكة",
+    "heroanim.networkDesc": "الشبكة تتشكل",
+    "heroanim.signal": "إشارة",
+    "heroanim.signalDesc": "التدفق يدور",
 
     // Features
     "features.badge": "المميزات",
@@ -1658,6 +1776,7 @@
     "common.admin": "مسؤول",
     "common.moderator": "مشرف",
     "common.member": "عضو",
+    "common.since": "عضو منذ",
     "common.algeria": "الجزائر",
     "common.back": "رجوع",
     "common.signin": "تسجيل الدخول",
@@ -1713,12 +1832,19 @@
     "register.success": "تم التسجيل بنجاح! تم إرسال بريد تأكيد إلى {email}. انقر على الرابط الموجود في البريد لتفعيل حسابك.",
 
     // Reset password
+    "reset.email": "البريد الإلكتروني",
+    "reset.emailPlaceholder": "بريدك@email.com",
     "reset.title": "نسيت كلمة المرور؟",
     "reset.subtitle": "أدخل بريدك الإلكتروني لاستلام رابط إعادة التعيين",
     "reset.sent": "إذا كان هناك حساب بهذا البريد، فقد تم إرسال رابط إعادة التعيين للتو. تحقق من صندوق بريدك (لا تنسَ مجلد الرسائل غير المرغوب فيها).",
     "reset.tooMany": "طلبات كثيرة جداً. انتظر ساعة قبل المحاولة مجدداً.",
     "reset.send": "إرسال الرابط",
     "reset.remember": "هل تتذكر كلمة المرور؟",
+
+    // Captcha
+    "captcha.loading": "جارٍ التحقق الأمني…",
+    "captcha.complete": "يرجى إكمال التحقق الأمني",
+    "captcha.loadError": "تعذر تحميل التحقق الأمني. أعد تحميل الصفحة أو حاول لاحقاً.",
 
     // Change password
     "change.verifying": "جارٍ التحقق من الرابط...",
@@ -1809,6 +1935,20 @@
     "networking.foundMany": "أعضاء موجودون",
     "networking.empty": "لم يتم العثور على أي عضو",
     "networking.emptyDomain": "لم يتم العثور على أي عضو في هذا المجال",
+
+    // التواجد عبر الإنترنت
+    "online.badge": "مباشر",
+    "online.title": "المجتمع",
+    "online.title2": "متصل الآن",
+    "online.members": "عضو متصل",
+    "online.member": "عضو متصل",
+    "online.first": "كن أول من يتصل!",
+    "online.others": "آخرون",
+    "online.cta": "عرض جميع الأعضاء",
+    "online.now": "متصل الآن",
+    "online.online": "متصل",
+    "online.offline": "غير متصل",
+    "online.justConnected": "{name} متصل الآن",
     "training.enrolled": "تم تسجيل الحضور بنجاح!",
     "profile.updated": "تم تحديث كلمة المرور!",
     "profile.itSpecialist": "مختص معلوماتية",
@@ -1821,6 +1961,7 @@
     "admin.title": "لوحة الإدارة — TechDZ",
     "admin.panel": "لوحة الإدارة",
     "admin.dashboard": "لوحة القيادة",
+    "admin.stats": "الإحصائيات",
     "admin.users": "المستخدمون",
     "admin.networking": "التواصل",
     "admin.forum": "المنتدى",

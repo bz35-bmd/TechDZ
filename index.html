@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="fr" data-theme="dark">
+﻿<!DOCTYPE html>
+<html lang="fr" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -46,6 +46,62 @@
                 <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
                     <i class="fas fa-moon"></i>
                 </button>
+<div class="theme-picker">
+    <button class="theme-picker-btn" id="themePickerBtn" aria-label="Choisir le thème" data-i18n-aria="theme.choose" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-palette"></i>
+    </button>
+    <div class="theme-picker-menu" id="themePickerMenu" role="menu">
+        <div class="theme-picker-header" data-i18n="theme.title">Thème du site</div>
+        <button class="theme-option" data-theme-option="code" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-code"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.code">Code</strong><small data-i18n="theme.codeDesc">Encre liquide + &lt;/&gt;</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="signal" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-signal"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.signal">Signal</strong><small data-i18n="theme.signalDesc">Réseau + nœud</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="fusion" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-fusion"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.fusion">Fusion</strong><small data-i18n="theme.fusionDesc">Encre + nœud</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="dunes" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-dunes"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.dunes">Dunes</strong><small data-i18n="theme.dunesDesc">Sahara + réseau or</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="nuit" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-nuit"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.nuit">Nuit</strong><small data-i18n="theme.nuitDesc">Étoiles + réseau indigo</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+    </div>
+</div>
+<div class="theme-picker hero-anim-picker">
+    <button class="theme-picker-btn" id="heroAnimPickerBtn" aria-label="Choisir l'animation du hero" data-i18n-aria="heroanim.choose" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-wand-magic-sparkles"></i>
+    </button>
+    <div class="theme-picker-menu" id="heroAnimPickerMenu" role="menu">
+        <div class="theme-picker-header" data-i18n="heroanim.title">Animation du hero</div>
+        <button class="theme-option" data-hero-anim="minimal" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch ha-swatch ha-minimal"></span>
+            <span class="theme-option-text"><strong data-i18n="heroanim.minimal">Minimal</strong><small data-i18n="heroanim.minimalDesc">Entrée en cascade</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-hero-anim="network" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch ha-swatch ha-network"></span>
+            <span class="theme-option-text"><strong data-i18n="heroanim.network">Network</strong><small data-i18n="heroanim.networkDesc">Le réseau se tisse</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-hero-anim="signal" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch ha-swatch ha-signal"></span>
+            <span class="theme-option-text"><strong data-i18n="heroanim.signal">Signal</strong><small data-i18n="heroanim.signalDesc">Le flux circule</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+    </div>
+</div>
                 <div class="lang-switcher" id="langSwitcher">
                     <button class="lang-btn" id="langBtn">
                         <span class="lang-flag">FR</span>
@@ -135,11 +191,13 @@
             <div class="hero-grid"></div>
             <div class="hero-glow"></div>
         </div>
+        <svg class="net-overlay" id="netOverlay" aria-hidden="true"></svg>
         <div class="container hero-container">
-            <div class="hero-content" data-animate="fade-up">
+            <div class="hero-content">
                 <div class="hero-badge">
                     <span class="badge-dot"></span>
-                    <span data-i18n="hero.badge">+5,000 informaticiens nous ont rejoints</span>
+                    <span class="badge-count" id="heroBadgeCount">+5,000</span>
+                    <span data-i18n="hero.badge">informaticiens nous ont rejoints</span>
                 </div>
                 <h1 class="hero-title">
                     <span data-i18n="hero.title1">La communauté IT</span>
@@ -180,45 +238,81 @@
                     </div>
                 </div>
             </div>
-            <div class="hero-visual" data-animate="fade-left">
+            <div class="hero-visual">
                 <div class="hero-card hero-card-1">
-                    <div class="card-header">
-                        <div class="card-avatar green">KM</div>
-                        <div class="card-info">
-                            <strong>Karim M.</strong>
-                            <span data-i18n="hero.cardRole1">Ingénieur Réseau</span>
+                    <div class="hero-card-inner">
+                        <div class="card-header">
+                            <div class="card-avatar green" id="heroCard1Avatar">KM</div>
+                            <div class="card-info">
+                                <strong id="heroCard1Name">Karim M.</strong>
+                                <span id="heroCard1Role" data-i18n="hero.cardRole1">Ingénieur Réseau</span>
+                            </div>
+                            <span class="card-badge" data-i18n="hero.cardActive">Actif</span>
                         </div>
-                        <span class="card-badge" data-i18n="hero.cardActive">Actif</span>
-                    </div>
-                    <p class="card-text" data-i18n="hero.cardText">"Grâce à TechDZ, j'ai pu résoudre un problème critique de BGP et décrocher un poste dans une telecom algérienne."</p>
-                    <div class="card-reactions">
-                        <span><i class="fas fa-heart"></i> 52</span>
-                        <span><i class="fas fa-comment"></i> 18</span>
+                        <p class="card-text" id="heroCard1Text" data-i18n="hero.cardText">"Grâce à TechDZ, j'ai pu résoudre un problème critique de BGP et décrocher un poste dans une telecom algérienne."</p>
+                        <div class="card-reactions" id="heroCard1Skills">
+                            <span><i class="fas fa-heart"></i> 52</span>
+                            <span><i class="fas fa-comment"></i> 18</span>
+                        </div>
                     </div>
                 </div>
                 <div class="hero-card hero-card-2">
-                    <div class="card-header">
-                        <div class="card-avatar blue">SA</div>
-                        <div class="card-info">
-                            <strong>Samir A.</strong>
-                            <span data-i18n="hero.cardRole2">Admin Système & Cloud</span>
+                    <div class="hero-card-inner">
+                        <div class="card-header">
+                            <div class="card-avatar blue" id="heroCard2Avatar">SA</div>
+                            <div class="card-info">
+                                <strong id="heroCard2Name">Samir A.</strong>
+                                <span id="heroCard2Role" data-i18n="hero.cardRole2">Admin Système & Cloud</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="card-code">
-                        <code>
-                            <span class="code-keyword">sudo</span> <span class="code-var">systemctl</span> <span class="code-string">start nginx</span><br>
-                            <span class="code-keyword">docker</span> <span class="code-var">compose</span> <span class="code-string">up -d</span>
-                        </code>
+                        <div class="card-code" id="heroCard2Post">
+                            <code>
+                                <span class="code-keyword">sudo</span> <span class="code-var">systemctl</span> <span class="code-string">start nginx</span><br>
+                                <span class="code-keyword">docker</span> <span class="code-var">compose</span> <span class="code-string">up -d</span>
+                            </code>
+                        </div>
                     </div>
                 </div>
                 <div class="hero-card hero-card-3">
-                    <div class="card-event">
-                        <span class="event-date">15 <span data-i18n="index.eventMonth">AOÛT</span></span>
-                        <div>
-                            <strong data-i18n="index.eventTitle">Meetup Cybersécurité</strong>
-                            <span data-i18n="index.eventAttendees">45+ participants attendus</span>
+                    <div class="hero-card-inner">
+                        <div class="card-event">
+                            <span class="event-date"><span id="heroCard3Day">15</span> <span data-i18n="index.eventMonth" id="heroCard3Month">AOÛT</span></span>
+                            <div>
+                                <strong data-i18n="index.eventTitle" id="heroCard3Title">Meetup Cybersécurité</strong>
+                                <span data-i18n="index.eventAttendees" id="heroCard3Attendees">45+ participants attendus</span>
+                            </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COMMUNITY ONLINE -->
+    <section class="online-section" id="online">
+        <div class="container">
+            <div class="online-card" data-animate="fade-up">
+                <div class="online-head">
+                    <div class="online-head-title">
+                        <span class="online-pulse"><span></span></span>
+                        <div>
+                            <span class="section-badge" data-i18n="online.badge">En direct</span>
+                            <h2 class="section-title-left" data-i18n="online.title">Communauté <span class="text-gradient" data-i18n="online.title2">en ligne</span></h2>
+                        </div>
+                    </div>
+                    <div class="online-count">
+                        <span id="onlineCount">0</span>
+                        <span id="onlineCountLabel" data-i18n="online.members">membres en ligne</span>
+                    </div>
+                </div>
+                <div class="online-grid" id="onlineAvatars"></div>
+                <div class="online-empty" id="onlineEmpty" style="display:none;">
+                    <i class="fas fa-users online-empty-icon"></i>
+                    <span data-i18n="online.first">Soyez le premier à vous connecter !</span>
+                </div>
+                <div class="online-foot">
+                    <span class="online-extra" id="onlineExtra"></span>
+                    <a href="networking.html" class="btn btn-outline btn-sm" data-i18n="online.cta">Voir tous les membres</a>
                 </div>
             </div>
         </div>
@@ -497,11 +591,11 @@
 
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="config.js"></script>
-    <script src="translations.js"></script>
-    <script src="auth.js"></script>
-    <script src="db.js"></script>
-    <script src="script.js"></script>
-    <script src="widgets.js"></script>
+    <script src="auth.js?v=20260807"></script>
+    <script src="db.js?v=20260807"></script>
+    <script src="script.js?v=20260807"></script>
+    <script src="translations.js?v=20260807"></script>
+    <script src="widgets.js?v=20260807"></script>
     <script>
     (async () => {
         const catColors = { 'Réseaux & Telecom': 'blue', 'Cybersécurité': 'red', 'Administration Système': 'green', 'Développement': 'purple', 'Bases de Données': 'amber', 'Data Science & IA': 'teal', 'UI/UX Design': 'pink', 'Gestion de Projet IT': 'orange', 'Emploi & Carrière': 'cyan', 'Général': 'gray' };
@@ -548,6 +642,137 @@
                 document.getElementById('statJobs').textContent = (count || 0).toLocaleString();
             } catch (e2) { console.error('Stats fallback error:', e2.message); }
         }
+
+        // 1b. Hero dynamique — badge (vrai nombre de membres)
+        try {
+            const badge = document.getElementById('heroBadgeCount');
+            if (badge && members > 0) badge.textContent = '+' + members.toLocaleString();
+        } catch (e) { console.error('Hero badge error:', e); }
+
+        // 1c. Hero dynamique — cartes : données aléatoires de la base, positions
+        // en escalier superposées, et chaque carte passe au premier plan à tour de rôle.
+        const HERO_SLOTS = [
+            { top: '15px', left: '0', rotate: '-4deg', width: '320px', zIndex: 3 },
+            { top: '165px', left: '150px', rotate: '2.5deg', width: '320px', zIndex: 2 },
+            { top: '300px', left: '20px', rotate: '-1.5deg', width: '320px', zIndex: 1 }
+        ];
+        let lastPick = { member: null, post: null, event: null };
+
+        const pickRandom = (arr, excludeKey, key) => {
+            if (!arr || arr.length === 0) return null;
+            if (arr.length === 1) return arr[0];
+            const idx = Math.floor(Math.random() * arr.length);
+            if (key && arr[idx][key] === excludeKey) return arr[(idx + 1) % arr.length];
+            return arr[idx];
+        };
+
+        async function loadHeroCards() {
+            try {
+                const [memberRes, postRes, eventRes] = await Promise.all([
+                    Auth.getClient().from('profiles').select('full_name, job_title, city, skills, created_at').order('created_at', { ascending: false }).limit(8),
+                    Auth.getClient().from('forum_posts').select('*, author:profiles(full_name, job_title), category:forum_categories(name, color)').order('created_at', { ascending: false }).limit(8),
+                    Auth.getClient().from('events').select('title, event_date, max_participants, registration_count').gte('event_date', new Date().toISOString()).order('event_date', { ascending: true }).limit(5)
+                ]);
+
+                const member = pickRandom(memberRes.data, lastPick.member, 'id');
+                const post = pickRandom(postRes.data, lastPick.post, 'id');
+                const event = pickRandom(eventRes.data, lastPick.event, 'id');
+                lastPick = { member: member?.id || null, post: post?.id || null, event: event?.id || null };
+
+                // Carte 1 — membre aléatoire
+                if (member) {
+                    const initials = (member.full_name || 'U').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+                    document.getElementById('heroCard1Avatar').textContent = initials;
+                    document.getElementById('heroCard1Name').textContent = member.full_name;
+                    document.getElementById('heroCard1Role').textContent = member.job_title || t('common.member');
+                    const since = new Date(member.created_at);
+                    document.getElementById('heroCard1Text').textContent = `"${member.city || 'Algérie'} · ${t('common.since')} ${since.getDate()} ${monthNames[since.getMonth()]} ${since.getFullYear()}"`;
+                    const skills = (member.skills || []).slice(0, 3);
+                    const skillBox = document.getElementById('heroCard1Skills');
+                    skillBox.style.display = '';
+                    if (skills.length > 0) {
+                        skillBox.innerHTML = skills.map(s => `<span><i class="fas fa-tag"></i> ${s}</span>`).join('');
+                    } else {
+                        skillBox.style.display = 'none';
+                    }
+                }
+
+                // Carte 2 — discussion aléatoire
+                if (post) {
+                    const author = post.author || {};
+                    document.getElementById('heroCard2Avatar').textContent = (author.full_name || 'U')[0].toUpperCase();
+                    document.getElementById('heroCard2Name').textContent = author.full_name || t('common.anonymous');
+                    document.getElementById('heroCard2Role').textContent = author.job_title || t('common.member');
+                    const cat = post.category;
+                    document.getElementById('heroCard2Post').innerHTML = `
+                        ${cat ? `<div class="post-tags" style="margin-bottom:8px"><span class="tag" style="background:rgba(var(--${cat.color}-rgb,99,102,241),0.15);color:var(--${cat.color},var(--primary))">${cat.name}</span></div>` : ''}
+                        <div style="font-weight:600;font-size:0.85rem;margin-bottom:8px">${post.title}</div>
+                        <div style="font-size:0.78rem;color:var(--text-muted);display:flex;gap:12px">
+                            <span><i class="fas fa-comment"></i> ${post.reply_count || 0}</span>
+                            <span><i class="fas fa-eye"></i> ${post.views || 0}</span>
+                        </div>`;
+                }
+
+                // Carte 3 — événement aléatoire
+                if (event) {
+                    const d = new Date(event.event_date);
+                    document.getElementById('heroCard3Day').textContent = d.getDate();
+                    document.getElementById('heroCard3Month').textContent = monthNames[d.getMonth()].toUpperCase();
+                    document.getElementById('heroCard3Title').textContent = event.title;
+                    const reg = event.registration_count || 0;
+                    document.getElementById('heroCard3Attendees').textContent =
+                        event.max_participants ? `${reg} / ${event.max_participants} ${t('events.places')}` : (reg ? `${reg} ${t('events.places')}` : '');
+                }
+                return true;
+            } catch (e) { console.error('Hero cards error:', e); return false; }
+        }
+
+        // 1d. Positions en escalier, mélangées aléatoirement (desktop uniquement)
+        function shuffleHeroSlots() {
+            const cards = document.querySelectorAll('.hero-card');
+            if (cards.length !== 3 || window.innerWidth <= 1024) return;
+            const slots = HERO_SLOTS.map(s => ({ ...s }));
+            for (let i = slots.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [slots[i], slots[j]] = [slots[j], slots[i]];
+            }
+            cards.forEach((card, i) => {
+                const s = slots[i];
+                card.style.top = s.top;
+                card.style.left = s.left;
+                card.style.right = '';
+                card.style.bottom = '';
+                card.style.width = s.width;
+                card.style.zIndex = s.zIndex;
+                card.style.setProperty('--rot', s.rotate);
+                const inner = card.querySelector('.hero-card-inner');
+                if (inner) {
+                    inner.style.animationDuration = (5 + Math.random() * 3).toFixed(2) + 's';
+                    inner.style.animationDelay = (Math.random() * 2).toFixed(2) + 's';
+                }
+            });
+        }
+
+        // 1e. Premier plan tournant : chaque carte passe devant les autres à tour de rôle
+        let heroActiveIdx = -1;
+        function heroCycle() {
+            const cards = document.querySelectorAll('.hero-card');
+            if (!cards.length) return;
+            heroActiveIdx = (heroActiveIdx + 1) % cards.length;
+            cards.forEach((c, i) => c.classList.toggle('active', i === heroActiveIdx));
+            setTimeout(heroCycle, 3200 + Math.random() * 1800);
+        }
+
+        (async function initHero() {
+            const ok = await loadHeroCards();
+            if (ok && window.innerWidth > 1024) shuffleHeroSlots();
+            setTimeout(heroCycle, 1000);
+            setInterval(async () => {
+                const ok2 = await loadHeroCards();
+                if (ok2 && window.innerWidth > 1024) shuffleHeroSlots();
+            }, 12000);
+        })();
+
 
         // 2. Load Forum Preview (3 latest posts)
         try {
@@ -723,7 +948,8 @@
         } catch(e) { console.error('Events preview error:', e); }
     })();
     </script>
-    <script src="assets/liquid-ink-background.js" defer></script>
+    <script src="assets/hero-animation.js?v=20260807" defer></script>
+    <script src="assets/themes.js" defer data-base=""></script>
 </body>
 </html>
 

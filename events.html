@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="fr" data-theme="dark">
+﻿<!DOCTYPE html>
+<html lang="fr" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -125,6 +125,39 @@
                 <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
                     <i class="fas fa-moon"></i>
                 </button>
+<div class="theme-picker">
+    <button class="theme-picker-btn" id="themePickerBtn" aria-label="Choisir le thème" data-i18n-aria="theme.choose" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-palette"></i>
+    </button>
+    <div class="theme-picker-menu" id="themePickerMenu" role="menu">
+        <div class="theme-picker-header" data-i18n="theme.title">Thème du site</div>
+        <button class="theme-option" data-theme-option="code" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-code"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.code">Code</strong><small data-i18n="theme.codeDesc">Encre liquide + &lt;/&gt;</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="signal" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-signal"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.signal">Signal</strong><small data-i18n="theme.signalDesc">Réseau + nœud</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="fusion" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-fusion"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.fusion">Fusion</strong><small data-i18n="theme.fusionDesc">Encre + nœud</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="dunes" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-dunes"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.dunes">Dunes</strong><small data-i18n="theme.dunesDesc">Sahara + réseau or</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="nuit" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-nuit"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.nuit">Nuit</strong><small data-i18n="theme.nuitDesc">Étoiles + réseau indigo</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+    </div>
+</div>
                 <div class="lang-switcher" id="langSwitcher">
                     <button class="lang-btn" id="langBtn">
                         <span class="lang-flag">FR</span>
@@ -230,11 +263,11 @@
 
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="config.js"></script>
-    <script src="translations.js"></script>
-    <script src="auth.js"></script>
-    <script src="db.js"></script>
-    <script src="script.js"></script>
-    <script src="widgets.js"></script>
+    <script src="auth.js?v=20260807"></script>
+    <script src="db.js?v=20260807"></script>
+    <script src="script.js?v=20260807"></script>
+    <script src="translations.js?v=20260807"></script>
+    <script src="widgets.js?v=20260807"></script>
     <script>
         (async () => {
             Auth.init();
@@ -372,6 +405,7 @@
             await Promise.all([loadEvents(), loadUpcoming()]);
         })();
     </script>
+<script src="assets/themes.js" defer data-base=""></script>
 </body>
 </html>
 

@@ -561,6 +561,156 @@ const DB = {
       .from('notifications')
       .update({ is_read: true })
       .eq('id', notifId);
+  },
+
+  // ==========================================
+  // ACTIVITY TRACKING & ONLINE USERS
+  // ==========================================
+
+  // Insère une ligne dans connection_logs (login / logout / heartbeat / page_view)
+  async logConnection(action, page) {
+    const client = this.getClient();
+    const { data: { session } } = await client.auth.getSession();
+    if (!session?.user) return { data: null, error: null };
+    const pageName = page || window.location.pathname.split('/').pop() || 'index.html';
+    const { data, error } = await client
+      .from('connection_logs')
+      .insert({
+        user_id: session.user.id,
+        action,
+        page: pageName,
+        user_agent: navigator.userAgent ? navigator.userAgent.substring(0, 400) : null
+      });
+    return { data, error };
+  },
+
+  // Utilisateurs en ligne (last_active < 5 minutes), pour le widget public
+  async getOnlineUsers(limit = 20) {
+    const client = this.getClient();
+    const cutoff = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+    const { data, error } = await client
+      .from('profiles')
+      .select('id, full_name, avatar_url, job_title, city, role, last_active')
+      .gt('last_active', cutoff)
+      .order('last_active', { ascending: false })
+      .limit(limit);
+    return { data, error };
+  },
+
+  // Nombre d'utilisateurs en ligne
+  async getOnlineCount() {
+    const client = this.getClient();
+    const cutoff = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+    try {
+      const { count, error } = await client
+        .from('profiles')
+        .select('id', { count: 'exact', head: true })
+        .gt('last_active', cutoff);
+      return { count: count || 0, error };
+    } catch (e) {
+      return { count: 0, error: { message: e.message } };
+    }
+  },
+
+  // Appel générique d'une fonction RPC
+  async rpc(name, params = {}) {
+    const client = this.getClient();
+    const { data, error } = await client.rpc(name, params);
+    return { data, error };
+  },
+
+  // ==========================================
+  // DAILY STATS (agrégats journaliers)
+  // ==========================================
+
+  async getDailyStats(limit = 30) {
+    const client = this.getClient();
+    const { data, error } = await client
+      .from('daily_stats')
+      .select('*')
+      .order('date', { ascending: false })
+      .limit(limit);
+    return { data, error };
+  },
+
+  // Stats temps réel du jour (admin) — via RPC admin_today_stats
+  async getTodayStats() {
+    return this.rpc('admin_today_stats');
+  },
+
+  // ==========================================
+  // ADMIN — STATISTIQUES D'ACTIVITÉ
+  // ==========================================
+
+  async getOnlineUsersDetailed() {
+    return this.rpc('admin_online_now');
+  },
+
+  async getHourlyActive(hours = 24) {
+    return this.rpc('admin_hourly_active', { hours });
+  },
+
+  async getDailyTotals(days = 7) {
+    return this.rpc('admin_daily_totals', { days });
+  },
+
+  async getPageDistribution(days = 30) {
+    return this.rpc('admin_page_distribution', { days });
+  },
+
+  async getPageStats() {
+    return this.rpc('admin_page_stats');
+  },
+
+  async getCumulativeUsers(days = 30) {
+    return this.rpc('admin_cumulative_users', { days });
+  },
+
+  async getUserStats(userId) {
+    return this.rpc('admin_user_stats', { target: userId });
+  },
+
+  // Historique des connexions (admin) avec pagination + filtres
+  async getConnectionLogs({ page = 1, limit = 50, date, userId, action, search } = {}) {
+    const client = this.getClient();
+    let q = client
+      .from('connection_logs')
+      .select('*, user:profiles(full_name, avatar_url)', { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .range((page - 1) * limit, page * limit - 1);
+
+    if (userId) q = q.eq('user_id', userId);
+    if (action) q = q.eq('action', action);
+    if (date) {
+      const start = new Date(date + 'T00:00:00');
+      const end = new Date(date + 'T23:59:59.999');
+      q = q.gte('created_at', start.toISOString()).lte('created_at', end.toISOString());
+    }
+    if (search) {
+      const { data: users } = await client
+        .from('profiles')
+        .select('id')
+        .or(`full_name.ilike.%${search}%,email.ilike.%${search}%`)
+        .limit(25);
+      const ids = (users || []).map(u => u.id);
+      if (ids.length) q = q.in('user_id', ids);
+      else q = q.in('user_id', []);
+    }
+
+    const { data, error, count } = await q;
+    return { data, error, count };
+  },
+
+  // Historique complet d'un utilisateur (fiche admin)
+  async getUserLogs(userId, { page = 1, limit = 50 } = {}) {
+    const client = this.getClient();
+    const { data, error, count } = await client
+      .from('connection_logs')
+      .select('*', { count: 'exact' })
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .range((page - 1) * limit, page * limit - 1);
+    return { data, error, count };
   }
 };
 

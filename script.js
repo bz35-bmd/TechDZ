@@ -60,6 +60,219 @@ function updateLinksWithLang() {
 }
 updateLinksWithLang();
 
+/* ============================================
+   Online module — badge navbar, widget "en ligne",
+   polling 30s, toasts temps réel (Supabase Realtime)
+   ============================================ */
+const Online = {
+  count: 0,
+  users: [],
+  userSet: new Set(),
+  timer: null,
+  myId: null,
+  channel: null,
+  started: false,
+  toastTimer: {},
+
+  start(myId) {
+    if (this.started) return;
+    this.started = true;
+    this.myId = myId || null;
+    this.injectBadge();
+    this.injectToastContainer();
+    this.refresh();
+    this.timer = setInterval(() => this.refresh(), 30000);
+    this.subscribeRealtime();
+  },
+
+  stop() {
+    this.started = false;
+    if (this.timer) { clearInterval(this.timer); this.timer = null; }
+    if (this.channel && window.Auth) {
+      try { Auth.getClient().removeChannel(this.channel); } catch (e) {}
+      this.channel = null;
+    }
+  },
+
+  async refresh() {
+    try {
+      const { count } = await DB.getOnlineCount();
+      if (count !== undefined) {
+        this.count = count;
+        this.updateBadge();
+      }
+    } catch (e) {}
+    try {
+      const { data } = await DB.getOnlineUsers(20);
+      if (data) {
+        this.users = data;
+        this.userSet = new Set(data.map(u => u.id));
+        this.renderWidgets();
+        document.dispatchEvent(new CustomEvent('online-updated'));
+      }
+    } catch (e) {}
+  },
+
+  notifyUpdate() {
+    document.dispatchEvent(new CustomEvent('online-updated'));
+  },
+
+  // ==========================================
+  // Badge navbar : ● 12
+  // ==========================================
+  injectBadge() {
+    if (document.getElementById('onlineNavBadge')) return;
+    const navActions = document.querySelector('.navbar .nav-actions');
+    if (!navActions) return;
+    const lang = localStorage.getItem('techdz-lang') || 'fr';
+    const badge = document.createElement('a');
+    badge.className = 'online-badge';
+    badge.href = 'networking.html' + (lang ? '?lang=' + lang : '');
+    badge.title = t('online.title', 'Communauté en ligne');
+    badge.innerHTML = '<span class="online-badge-dot"></span><span class="online-badge-count" id="onlineNavBadge">0</span>';
+    navActions.insertBefore(badge, navActions.firstChild);
+  },
+
+  updateBadge() {
+    const el = document.getElementById('onlineNavBadge');
+    if (el) el.textContent = this.count;
+  },
+
+  // ==========================================
+  // Widgets : index.html (Communauté en ligne) + networking.html (En ligne maintenant)
+  // ==========================================
+  renderWidgets() {
+    const homeCount = document.getElementById('onlineCount');
+    if (homeCount) {
+      homeCount.textContent = this.count;
+      const homeLabel = document.getElementById('onlineCountLabel');
+      if (homeLabel) homeLabel.textContent = this.count > 1 ? t('online.members', 'membres en ligne') : t('online.member', 'membre en ligne');
+      const homeEmpty = document.getElementById('onlineEmpty');
+      if (homeEmpty) homeEmpty.style.display = this.users.length ? 'none' : 'flex';
+      const homeGrid = document.getElementById('onlineAvatars');
+      if (homeGrid) homeGrid.innerHTML = this.users.slice(0, 8).map((u, i) => this.userPill(u, i)).join('');
+      const extra = document.getElementById('onlineExtra');
+      if (extra) extra.innerHTML = this.users.length > 8 ? `+${this.users.length - 8} ${t('online.others', 'autres')}` : '';
+    }
+
+    const nowSection = document.getElementById('onlineNowSection');
+    if (nowSection) {
+      nowSection.style.display = 'block';
+      const nowCount = document.getElementById('onlineNowCount');
+      if (nowCount) nowCount.textContent = this.count;
+      const nowList = document.getElementById('onlineNowList');
+      if (nowList) {
+        nowList.innerHTML = this.users.length === 0
+          ? `<div class="online-now-empty"><i class="fas fa-users online-now-empty-icon"></i> ${t('online.first', 'Soyez le premier à vous connecter !')}</div>`
+          : this.users.map((u, i) => this.nowItem(u, i)).join('');
+      }
+    }
+  },
+
+  // ---------- Helpers de rendu : échappement + avatars (photo ou initiales) ----------
+  escapeHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  },
+
+  initials(name) {
+    return (name || 'U').split(/\s+/).filter(Boolean).map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  },
+
+  avatar(u) {
+    const name = this.escapeHtml(u.full_name || '');
+    if (u.avatar_url) {
+      return `<div class="online-avatar online-avatar-img" role="img" aria-label="${name}" style="background-image:url('${this.escapeHtml(u.avatar_url)}')"></div>`;
+    }
+    return `<div class="online-avatar">${this.initials(u.full_name)}</div>`;
+  },
+
+  userPill(u, index) {
+    const lang = localStorage.getItem('techdz-lang') || '';
+    const href = 'networking.html' + (lang ? '?lang=' + lang : '');
+    const name = this.escapeHtml(u.full_name || '');
+    const city = u.city ? `<span class="online-user-city"><i class="fas fa-map-marker-alt"></i>${this.escapeHtml(u.city)}</span>` : '';
+    return `<a class="online-user" href="${href}" title="${name}${u.city ? ' — ' + this.escapeHtml(u.city) : ''}" style="animation-delay:${Math.min(index * 45, 400)}ms">${this.avatar(u)}<span class="online-user-name">${name}</span>${city}</a>`;
+  },
+
+  nowItem(u, index) {
+    const name = this.escapeHtml(u.full_name || '');
+    const role = u.role === 'admin' ? t('common.admin', 'Admin') : u.role === 'moderator' ? t('common.moderator', 'Modérateur') : t('common.member', 'Membre');
+    return `<div class="online-now-item" style="animation-delay:${Math.min(index * 40, 400)}ms">${this.avatar(u)}
+      <div class="online-now-info">
+        <strong>${name}</strong>
+        <span>${this.escapeHtml(u.job_title || '')}${u.city ? ' • ' + this.escapeHtml(u.city) : ''}</span>
+      </div>
+      <span class="member-role-tag ${u.role || 'member'}">${this.escapeHtml(role)}</span>
+    </div>`;
+  },
+
+  // ==========================================
+  // Toasts temps réel (connexion d'un membre)
+  // ==========================================
+  injectToastContainer() {
+    if (document.getElementById('toastContainer')) return;
+    const c = document.createElement('div');
+    c.id = 'toastContainer';
+    c.className = 'toast-container';
+    document.body.appendChild(c);
+  },
+
+  toast(message) {
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+    if (container.children.length >= 3) {
+      const first = container.firstChild;
+      if (first && first._timer) clearTimeout(first._timer);
+      first.remove();
+    }
+    const el = document.createElement('div');
+    el.className = 'toast';
+    el.innerHTML = `
+      <div class="toast-icon"><i class="fas fa-circle"></i></div>
+      <div class="toast-msg">${message}</div>
+      <button class="toast-close" aria-label="Fermer"><i class="fas fa-times"></i></button>`;
+    el.querySelector('.toast-close').addEventListener('click', () => {
+      clearTimeout(el._timer);
+      el.remove();
+    });
+    container.appendChild(el);
+    el._timer = setTimeout(() => el.remove(), 3000);
+  },
+
+  // ==========================================
+  // Supabase Realtime : détecter les nouvelles connexions
+  // ==========================================
+  subscribeRealtime() {
+    if (!window.Auth) return;
+    const self = this;
+    try {
+      const client = Auth.getClient();
+      this.channel = client.channel('online-presence')
+        .on('postgres_changes', {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'profiles'
+        }, payload => {
+          const rec = payload.new || {};
+          if (!rec.last_active || !rec.full_name) return;
+          if (self.myId && rec.id === self.myId) return;
+          const fresh = (Date.now() - new Date(rec.last_active).getTime()) < 5 * 60 * 1000;
+          if (!fresh) return;
+          if (self.userSet.has(rec.id)) return;
+          self.userSet.add(rec.id);
+          self.notifyUpdate();
+          self.toast(t('online.justConnected', '{name} vient de se connecter').replace('{name}', rec.full_name));
+        })
+        .subscribe();
+    } catch (e) {
+      console.warn('Realtime indisponible:', e.message);
+    }
+  }
+};
+window.Online = Online;
+
 function setLanguage(lang) {
   const html = document.documentElement;
   const tr = window.translations;
@@ -107,7 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const themeToggle = document.getElementById('themeToggle');
   if (themeToggle) {
     const themeIcon = themeToggle.querySelector('i');
-    const savedTheme = localStorage.getItem('techdz-theme') || 'dark';
+    const savedTheme = localStorage.getItem('techdz-theme') || 'light';
     html.setAttribute('data-theme', savedTheme);
     updateThemeIcon(savedTheme);
 
@@ -231,6 +444,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (dropdownName) dropdownName.textContent = profile?.full_name || 'Utilisateur';
     if (dropdownEmail) dropdownEmail.textContent = user.email;
     if (adminLink && profile?.role === 'admin') adminLink.style.display = 'block';
+    if (window.Auth) Auth.startActivityTracking();
+    if (window.Online) Online.start(user?.id || null);
   }
 
   function showLoggedOut() {
@@ -240,6 +455,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (authLoggedIn) authLoggedIn.style.display = 'none';
     if (mobileAuthOut) mobileAuthOut.style.display = 'block';
     if (mobileAuthIn) mobileAuthIn.style.display = 'none';
+    if (window.Auth) Auth.stopActivityTracking();
+    if (window.Online) Online.start(null);
   }
 
   // User menu toggle
@@ -277,6 +494,9 @@ document.addEventListener('DOMContentLoaded', () => {
     Auth.onAuthStateChange(async (event, session) => {
       console.log('Auth event:', event);
       if (session?.user) {
+        if (event === 'SIGNED_IN' && window.Auth) {
+          Auth.logConnection('login');
+        }
         const { data: profile, error } = await Auth.getProfile(session.user.id);
         if (error) console.warn('Profile error:', error);
         showLoggedIn(session.user, profile);
@@ -361,7 +581,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Animated Counters
   // ==========================================
   const heroStats = document.querySelector('.hero-stats');
-  if (heroStats) {
+  if (heroStats && !window.__heroAnimActive) {
     const statsObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
