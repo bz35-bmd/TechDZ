@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="title.profile">Mon profil — TechDZ</title>
+    <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .profile-page { padding: 120px 0 80px; min-height: 100vh; }
+        .profile-container { max-width: 900px; margin: 0 auto; }
+
+        /* Profile Header */
+        .profile-header {
+            display: flex;
+            gap: 32px;
+            align-items: flex-start;
+            padding: 40px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 32px;
+        }
+        .profile-avatar-large {
+            width: 100px;
+            height: 100px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #fff;
+            background: var(--gradient-primary);
+            flex-shrink: 0;
+            position: relative;
+        }
+        .profile-avatar-edit {
+            position: absolute;
+            bottom: -4px;
+            right: -4px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .profile-avatar-edit:hover { border-color: var(--primary); color: var(--primary); }
+        .profile-info { flex: 1; }
+        .profile-name {
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+        .profile-job {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        .profile-meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+        .profile-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        .profile-meta i { color: var(--primary); font-size: 0.8rem; }
+        .profile-role-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .profile-role-badge.admin { background: rgba(239,68,68,0.1); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
+        .profile-role-badge.moderator { background: rgba(245,158,11,0.1); color: var(--amber); border: 1px solid rgba(245,158,11,0.2); }
+        .profile-role-badge.member { background: rgba(59,130,246,0.1); color: var(--primary); border: 1px solid rgba(59,130,246,0.2); }
+        .profile-stats-row {
+            display: flex;
+            gap: 24px;
+            margin-top: 16px;
+        }
+        .profile-stat {
+            text-align: center;
+        }
+        .profile-stat-num {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+        .profile-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Tabs */
+        .profile-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 24px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 4px;
+        }
+        .profile-tab {
+            flex: 1;
+            padding: 10px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .profile-tab:hover { color: var(--text-primary); }
+        .profile-tab.active {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        /* Tab Content */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Edit Form */
+        .edit-card {
+            padding: 32px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+        }
+        .edit-card h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+        .form-group textarea { min-height: 100px; resize: vertical; }
+
+        .skills-input-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 8px 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            min-height: 48px;
+            cursor: text;
+            transition: all 0.2s;
+        }
+        .skills-input-wrapper:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+        .skill-tag {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: rgba(59,130,246,0.1);
+            border: 1px solid rgba(59,130,246,0.2);
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--primary);
+        }
+        .skill-tag button {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            transition: color 0.2s;
+        }
+        .skill-tag button:hover { color: var(--red); }
+        .skills-input {
+            border: none;
+            background: transparent;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            min-width: 100px;
+            flex: 1;
+            outline: none;
+        }
+        .skills-input::placeholder { color: var(--text-muted); }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .alert-bar {
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .alert-bar.success {
+            display: block !important;
+            background: rgba(16,185,129,0.1);
+            border: 1px solid rgba(16,185,129,0.2);
+            color: var(--secondary);
+        }
+        .alert-bar.error {
+            display: block !important;
+            background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.2);
+            color: var(--red);
+        }
+
+        /* Activity List */
+        .activity-list { display: flex; flex-direction: column; gap: 12px; }
+        .activity-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+        }
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 0.85rem;
+        }
+        .activity-icon.blue { background: rgba(59,130,246,0.1); color: var(--primary); }
+        .activity-icon.green { background: rgba(16,185,129,0.1); color: var(--secondary); }
+        .activity-icon.purple { background: rgba(139,92,246,0.1); color: var(--accent); }
+        .activity-content { flex: 1; }
+        .activity-content strong { font-size: 0.9rem; }
+        .activity-content p { font-size: 0.82rem; color: var(--text-muted); margin-top: 2px; }
+        .activity-time { font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+        .empty-state i { font-size: 2.5rem; margin-bottom: 16px; opacity: 0.3; }
+        .empty-state p { font-size: 0.95rem; }
+
+        /* Danger Zone */
+        .danger-zone {
+            margin-top: 32px;
+            padding: 24px;
+            background: rgba(239,68,68,0.03);
+            border: 1px solid rgba(239,68,68,0.15);
+            border-radius: var(--radius-lg);
+        }
+        .danger-zone h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--red);
+            margin-bottom: 8px;
+        }
+        .danger-zone p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .profile-header { flex-direction: column; align-items: center; text-align: center; padding: 24px; }
+            .profile-meta { justify-content: center; }
+            .profile-stats-row { justify-content: center; }
+            .form-row { grid-template-columns: 1fr; }
+            .profile-tabs { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVIGATION (same as index) -->
+    <nav class="navbar scrolled" id="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="assets/img/logo.svg" alt="TechDZ" height="32">
+            </a>
+            <div class="nav-links">
+<a href="index.html#features" class="nav-link" data-i18n="nav.features">Fonctionnalités</a>
+                <a href="forum.html" class="nav-link" data-i18n="nav.forum">Forum</a>
+                <a href="jobs.html" class="nav-link" data-i18n="nav.jobs">Emplois</a>
+                <a href="training.html" class="nav-link" data-i18n="nav.training">Formations</a>
+                <a href="news.html" class="nav-link" data-i18n="nav.news">Actualités</a>
+                <a href="events.html" class="nav-link" data-i18n="nav.events">Événements</a>
+                <a href="networking.html" class="nav-link" data-i18n="nav.networking">Réseautage</a>
+            </div>
+            <div class="nav-actions">
+                            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+            </button>
+<div class="theme-picker">
+    <button class="theme-picker-btn" id="themePickerBtn" aria-label="Choisir le thème" data-i18n-aria="theme.choose" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-palette"></i>
+    </button>
+    <div class="theme-picker-menu" id="themePickerMenu" role="menu">
+        <div class="theme-picker-header" data-i18n="theme.title">Thème du site</div>
+        <button class="theme-option" data-theme-option="code" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-code"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.code">Code</strong><small data-i18n="theme.codeDesc">Encre liquide + &lt;/&gt;</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="signal" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-signal"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.signal">Signal</strong><small data-i18n="theme.signalDesc">Réseau + nœud</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="fusion" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-fusion"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.fusion">Fusion</strong><small data-i18n="theme.fusionDesc">Encre + nœud</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="dunes" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-dunes"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.dunes">Dunes</strong><small data-i18n="theme.dunesDesc">Sahara + réseau or</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="nuit" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-nuit"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.nuit">Nuit</strong><small data-i18n="theme.nuitDesc">Étoiles + réseau indigo</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+    </div>
+</div>
+            <div class="lang-switcher" id="langSwitcher">
+                <button class="lang-btn" id="langBtn">
+                    <span class="lang-flag">FR</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="lang-dropdown" id="langDropdown">
+                    <button class="lang-option active" data-lang="fr">
+                        <span class="lang-flag">FR</span>
+                        <span>Français</span>
+                    </button>
+                    <button class="lang-option" data-lang="en">
+                        <span class="lang-flag">EN</span>
+                        <span>English</span>
+                    </button>
+                    <button class="lang-option" data-lang="ar">
+                        <span class="lang-flag">AR</span>
+                        <span>العربية</span>
+                    </button>
+                </div>
+            </div>
+                <a href="index.html" class="btn btn-outline btn-sm" data-i18n="profile.backToSite">Retour au site</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="profile-page">
+        <div class="container profile-container">
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="profile-avatar-large" id="profileAvatar">U
+                    <label class="profile-avatar-edit" for="avatarUpload">
+                        <i class="fas fa-camera"></i>
+                    </label>
+                    <input type="file" id="avatarUpload" accept="image/*" style="display:none;">
+                </div>
+                <div class="profile-info">
+                    <h1 class="profile-name" id="profileName" data-i18n="profile.loading">Chargement...</h1>
+                    <p class="profile-job" id="profileJob">—</p>
+                    <div class="profile-meta">
+                        <span><i class="fas fa-map-marker-alt"></i> <span id="profileCity">—</span></span>
+                        <span><i class="fas fa-calendar"></i> <span data-i18n="profile.registered">Inscrit le</span> <span id="profileDate">—</span></span>
+                    </div>
+                    <span class="profile-role-badge member" id="profileRole" data-i18n="profile.member">Membre</span>
+                    <div class="profile-stats-row">
+                        <div class="profile-stat">
+                            <div class="profile-stat-num" id="statPosts">0</div>
+                            <div class="profile-stat-label" data-i18n="profile.posts">Posts</div>
+                        </div>
+                        <div class="profile-stat">
+                            <div class="profile-stat-num" id="statReplies">0</div>
+                            <div class="profile-stat-label" data-i18n="profile.replies">Réponses</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="profile-tabs">
+                <button class="profile-tab active" data-tab="edit"><i class="fas fa-edit"></i> <span data-i18n="profile.editTab">Modifier</span></button>
+                <button class="profile-tab" data-tab="activity"><i class="fas fa-clock"></i> <span data-i18n="profile.activityTab">Activité</span></button>
+                <button class="profile-tab" data-tab="settings"><i class="fas fa-cog"></i> <span data-i18n="profile.settingsTab">Paramètres</span></button>
+            </div>
+
+            <!-- Edit Tab -->
+            <div class="tab-content active" id="tab-edit">
+                <div class="edit-card">
+                    <h2 data-i18n="profile.editTitle">Modifier mon profil</h2>
+                    <div class="alert-bar" id="editAlert"></div>
+                    <form id="editForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editName" data-i18n="profile.nameLabel">Nom complet</label>
+                                <input type="text" id="editName" placeholder="Mohamed Benali" data-i18n-placeholder="profile.namePlaceholder">
+                            </div>
+                            <div class="form-group">
+                                <label for="editJob" data-i18n="profile.jobLabel">Titre professionnel</label>
+                                <input type="text" id="editJob" placeholder="Ingénieur Réseau" data-i18n-placeholder="profile.jobPlaceholder">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editCity" data-i18n="profile.cityLabel">Ville</label>
+                                <input type="text" id="editCity" placeholder="Alger" data-i18n-placeholder="profile.cityPlaceholder">
+                            </div>
+                            <div class="form-group">
+                                <label for="editWebsite" data-i18n="profile.websiteLabel">Site web</label>
+                                <input type="url" id="editWebsite" placeholder="https://...">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="editLinkedIn" data-i18n="profile.linkedinLabel">LinkedIn</label>
+                                <input type="url" id="editLinkedIn" placeholder="https://linkedin.com/in/...">
+                            </div>
+                            <div class="form-group">
+                                <label for="editGithub" data-i18n="profile.githubLabel">GitHub</label>
+                                <input type="url" id="editGithub" placeholder="https://github.com/...">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="editBio" data-i18n="profile.bioLabel">Bio</label>
+                            <textarea id="editBio" placeholder="Parlez-nous de vous..." data-i18n-placeholder="profile.bioPlaceholder"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="profile.skillsLabel">Compétences</label>
+                            <div class="skills-input-wrapper" id="skillsWrapper">
+                                <input type="text" class="skills-input" id="skillsInput" placeholder="Tapez et appuyez sur Entrée..." data-i18n-placeholder="profile.skillsPlaceholder">
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-outline" id="cancelBtn"><span data-i18n="common.cancel">Annuler</span></button>
+                            <button type="submit" class="btn btn-primary" id="saveBtn">
+                                <i class="fas fa-save"></i> <span data-i18n="profile.save">Enregistrer</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Activity Tab -->
+            <div class="tab-content" id="tab-activity">
+                <div class="activity-list" id="activityList">
+                    <div class="empty-state">
+                        <i class="fas fa-clock"></i>
+                        <p data-i18n="profile.noActivity">Aucune activité récente</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div class="tab-content" id="tab-settings">
+                <div class="edit-card">
+                    <h2 data-i18n="profile.settingsTitle">Paramètres du compte</h2>
+                    <div class="form-group">
+                        <label data-i18n="profile.emailLabel">Email</label>
+                        <input type="email" id="settingsEmail" disabled style="opacity:0.5;">
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="profile.passwordLabel">Changer le mot de passe</label>
+                        <input type="password" id="newPassword" placeholder="Nouveau mot de passe (min. 6 caractères)" data-i18n-placeholder="profile.passwordPlaceholder">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-primary" id="updatePasswordBtn">
+                            <i class="fas fa-key"></i> <span data-i18n="profile.updatePassword">Mettre à jour le mot de passe</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="danger-zone">
+                    <h3><i class="fas fa-exclamation-triangle"></i> <span data-i18n="profile.dangerZone">Zone dangereuse</span></h3>
+                    <p data-i18n="profile.dangerText">Supprimer votre compte est irréversible. Toutes vos données seront perdues.</p>
+                    <button class="btn btn-danger" id="deleteAccountBtn">
+                        <i class="fas fa-trash"></i> <span data-i18n="profile.deleteAccount">Supprimer mon compte</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/auth.js?v=20260807"></script>
+    <script src="assets/js/db.js?v=20260807"></script>
+    <script src="assets/js/translations.js?v=20260807"></script>
+    <script src="assets/js/i18n.js?v=20260807"></script>
+    <script src="assets/js/script.js?v=20260807"></script>
+
+    <script src="assets/js/widgets.js?v=20260807"></script>
+    <script>
+        (async () => {
+            Auth.init();
+            const { user } = await Auth.getUser();
+            if (!user) { window.location.href = 'login.html'; return; }
+            if (!Auth.isEmailConfirmed(user)) {
+                await Auth.signOut('login.html');
+                return;
+            }
+
+            const { data: profile } = await Auth.getProfile(user.id);
+            if (!profile) return;
+
+            // ==========================================
+            // Skills (declare BEFORE fillProfile)
+            // ==========================================
+            let skills = profile.skills || [];
+            const skillsInput = document.getElementById('skillsInput');
+            const skillsWrapper = document.getElementById('skillsWrapper');
+
+            function renderSkills() {
+                skillsWrapper.querySelectorAll('.skill-tag').forEach(t => t.remove());
+                skills.forEach((skill, i) => {
+                    const tag = document.createElement('span');
+                    tag.className = 'skill-tag';
+                    tag.innerHTML = `${skill} <button type="button" onclick="removeSkill(${i})">&times;</button>`;
+                    skillsWrapper.insertBefore(tag, skillsInput);
+                });
+            }
+
+            window.removeSkill = (i) => {
+                skills.splice(i, 1);
+                renderSkills();
+            };
+
+            // ==========================================
+            // Fill Profile
+            // ==========================================
+            function fillProfile(p) {
+                document.getElementById('profileAvatar').childNodes[0].textContent = (p.full_name || 'U')[0].toUpperCase();
+                document.getElementById('profileName').textContent = p.full_name || t('common.user');
+                document.getElementById('profileJob').textContent = p.job_title || t('profile.itSpecialist');
+                document.getElementById('profileCity').textContent = p.city || t('common.algeria');
+                document.getElementById('profileDate').textContent = new Date(p.created_at).toLocaleDateString('fr-FR');
+
+                const roleEl = document.getElementById('profileRole');
+                roleEl.textContent = p.role === 'admin' ? t('common.admin') : p.role === 'moderator' ? t('common.moderator') : t('common.member');
+                roleEl.className = `profile-role-badge ${p.role}`;
+
+                // Fill edit form
+                document.getElementById('editName').value = p.full_name || '';
+                document.getElementById('editJob').value = p.job_title || '';
+                document.getElementById('editCity').value = p.city || '';
+                document.getElementById('editWebsite').value = p.website || '';
+                document.getElementById('editLinkedIn').value = p.linkedin || '';
+                document.getElementById('editGithub').value = p.github || '';
+                document.getElementById('editBio').value = p.bio || '';
+                document.getElementById('settingsEmail').value = user.email || '';
+
+                // Skills
+                skills = p.skills || [];
+                renderSkills();
+            }
+
+            fillProfile(profile);
+
+            skillsInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const val = skillsInput.value.trim();
+                    if (val && !skills.includes(val)) {
+                        skills.push(val);
+                        renderSkills();
+                        skillsInput.value = '';
+                    }
+                }
+            });
+
+            // ==========================================
+            // Save Profile
+            // ==========================================
+            const editForm = document.getElementById('editForm');
+            const editAlert = document.getElementById('editAlert');
+            const saveBtn = document.getElementById('saveBtn');
+
+            editForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + t('profile.saving');
+                saveBtn.disabled = true;
+                editAlert.style.display = 'none';
+
+                const updates = {
+                    full_name: document.getElementById('editName').value.trim(),
+                    job_title: document.getElementById('editJob').value.trim() || null,
+                    city: document.getElementById('editCity').value.trim() || null,
+                    website: document.getElementById('editWebsite').value.trim() || null,
+                    linkedin: document.getElementById('editLinkedIn').value.trim() || null,
+                    github: document.getElementById('editGithub').value.trim() || null,
+                    bio: document.getElementById('editBio').value.trim() || null,
+                    skills: skills
+                };
+
+                console.log('Updating profile:', updates);
+                const { data, error } = await Auth.updateProfile(user.id, updates);
+                console.log('Update result:', data, error);
+
+                if (error) {
+                    editAlert.className = 'alert-bar error';
+                    editAlert.textContent = t('common.error') + ': ' + (error.message || JSON.stringify(error));
+                    editAlert.style.display = 'block';
+                } else {
+                    editAlert.className = 'alert-bar success';
+                    editAlert.textContent = t('profile.saved');
+                    editAlert.style.display = 'block';
+                    if (data) fillProfile(data);
+                }
+
+                saveBtn.innerHTML = '<i class="fas fa-save"></i> ' + t('profile.save');
+                saveBtn.disabled = false;
+                setTimeout(() => { editAlert.style.display = 'none'; }, 4000);
+            });
+
+            document.getElementById('cancelBtn').addEventListener('click', () => fillProfile(profile));
+
+            // ==========================================
+            // Tabs
+            // ==========================================
+            document.querySelectorAll('.profile-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById(`tab-${tab.getAttribute('data-tab')}`).classList.add('active');
+                });
+            });
+
+            // ==========================================
+            // Update Password
+            // ==========================================
+            document.getElementById('updatePasswordBtn').addEventListener('click', async () => {
+                const newPass = document.getElementById('newPassword').value;
+                if (!newPass || newPass.length < 6) {
+                    alert(t('common.passwordShort'));
+                    return;
+                }
+                const client = Auth.getClient();
+                const { error } = await client.auth.updateUser({ password: newPass });
+                if (error) {
+                    alert(t('common.error') + ': ' + error.message);
+                } else {
+                    alert(t('profile.updated'));
+                    document.getElementById('newPassword').value = '';
+                }
+            });
+
+            // ==========================================
+            // Delete Account
+            // ==========================================
+            document.getElementById('deleteAccountBtn').addEventListener('click', async () => {
+                if (!confirm(t('profile.confirmDelete'))) return;
+                if (!confirm(t('profile.confirmDelete2'))) return;
+
+                await DB.deleteUser(user.id);
+                await Auth.signOut();
+            });
+
+            // ==========================================
+            // Avatar Upload (placeholder)
+            // ==========================================
+            document.getElementById('avatarUpload').addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                // For now, just show preview
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    document.getElementById('profileAvatar').style.backgroundImage = `url(${ev.target.result})`;
+                    document.getElementById('profileAvatar').style.backgroundSize = 'cover';
+                    document.getElementById('profileAvatar').style.backgroundPosition = 'center';
+                    document.getElementById('profileAvatar').childNodes[0].textContent = '';
+                };
+                reader.readAsDataURL(file);
+
+                // TODO: Upload to Supabase Storage
+                // const { data, error } = await client.storage.from('avatars').upload(`${user.id}/avatar.jpg`, file);
+            });
+        })();
+    </script>
+<script src="assets/js/effects/themes.js" defer data-base=""></script>
+</body>
+</html>
+
+

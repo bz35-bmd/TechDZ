@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="title.networking">Réseautage — TechDZ</title>
+    <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .networking-page { padding: 100px 0 80px; min-height: 100vh; }
+        .networking-header { text-align: center; max-width: 640px; margin: 0 auto 48px; }
+        .networking-header h1 { font-size: 2.25rem; font-weight: 800; margin-bottom: 12px; }
+        .networking-header p { color: var(--text-secondary); font-size: 1.05rem; }
+
+        .networking-tools {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+        .networking-tools input,
+        .networking-tools select {
+            padding: 10px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            font-family: inherit;
+        }
+        .networking-tools input { flex: 1; min-width: 200px; }
+        .networking-tools input:focus,
+        .networking-tools select:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .members-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .member-card {
+            padding: 24px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .member-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        .member-avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #fff;
+            margin: 0 auto 16px;
+        }
+        .member-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 4px; }
+        .member-card .member-job { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 8px; }
+        .member-card .member-city { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px; }
+        .member-card .member-city i { margin-right: 4px; }
+        .member-role-tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .member-role-tag.admin { background: rgba(239,68,68,0.12); color: var(--red); }
+        .member-role-tag.moderator { background: rgba(245,158,11,0.12); color: var(--amber); }
+        .member-role-tag.member { background: rgba(59,130,246,0.12); color: var(--primary); }
+
+        .member-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+        .member-skill-tag {
+            padding: 3px 10px;
+            background: rgba(59,130,246,0.08);
+            border: 1px solid rgba(59,130,246,0.15);
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--primary);
+        }
+        .member-contact-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: var(--primary);
+            color: #fff;
+            transition: all 0.2s;
+        }
+        .member-contact-btn:hover { opacity: 0.9; }
+
+        .loading { text-align: center; padding: 40px; color: var(--text-muted); }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+        .empty-state i { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.3; display: block; }
+        .members-count { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px; }
+
+        @media (max-width: 768px) {
+            .members-grid { grid-template-columns: 1fr; }
+            .networking-tools { flex-direction: column; }
+            .networking-tools input { min-width: auto; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar scrolled">
+        <div class="container nav-container">
+            <a href="index.html" class="nav-logo"><img src="assets/img/logo.svg" alt="TechDZ" height="32"></a>
+            <div class="nav-links">
+                <a href="index.html#features" class="nav-link" data-i18n="nav.features">Fonctionnalités</a>
+                <a href="forum.html" class="nav-link" data-i18n="nav.forum">Forum</a>
+                <a href="jobs.html" class="nav-link" data-i18n="nav.jobs">Emplois</a>
+                <a href="training.html" class="nav-link" data-i18n="nav.training">Formations</a>
+                <a href="news.html" class="nav-link" data-i18n="nav.news">Actualités</a>
+                <a href="events.html" class="nav-link" data-i18n="nav.events">Événements</a>
+                <a href="networking.html" class="nav-link" style="color:var(--primary)" data-i18n="nav.networking">Réseautage</a>
+            </div>
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+<div class="theme-picker">
+    <button class="theme-picker-btn" id="themePickerBtn" aria-label="Choisir le thème" data-i18n-aria="theme.choose" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-palette"></i>
+    </button>
+    <div class="theme-picker-menu" id="themePickerMenu" role="menu">
+        <div class="theme-picker-header" data-i18n="theme.title">Thème du site</div>
+        <button class="theme-option" data-theme-option="code" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-code"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.code">Code</strong><small data-i18n="theme.codeDesc">Encre liquide + &lt;/&gt;</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="signal" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-signal"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.signal">Signal</strong><small data-i18n="theme.signalDesc">Réseau + nœud</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="fusion" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-fusion"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.fusion">Fusion</strong><small data-i18n="theme.fusionDesc">Encre + nœud</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="dunes" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-dunes"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.dunes">Dunes</strong><small data-i18n="theme.dunesDesc">Sahara + réseau or</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="nuit" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-nuit"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.nuit">Nuit</strong><small data-i18n="theme.nuitDesc">Étoiles + réseau indigo</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+    </div>
+</div>
+                <div class="lang-switcher" id="langSwitcher">
+                    <button class="lang-btn" id="langBtn">
+                        <span class="lang-flag">FR</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="lang-dropdown" id="langDropdown">
+                        <button class="lang-option active" data-lang="fr">
+                            <span class="lang-flag">FR</span>
+                            <span>Français</span>
+                        </button>
+                        <button class="lang-option" data-lang="en">
+                            <span class="lang-flag">EN</span>
+                            <span>English</span>
+                        </button>
+                        <button class="lang-option" data-lang="ar">
+                            <span class="lang-flag">AR</span>
+                            <span>العربية</span>
+                        </button>
+                    </div>
+                </div>                <div id="authLoggedOut"><a href="login.html" class="btn btn-outline btn-sm" data-i18n="nav.login">Se connecter</a></div>
+                <div id="authLoggedIn" style="display:none;"><a href="profile.html" class="btn btn-primary btn-sm">Mon profil</a></div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="networking-page">
+        <div class="container">
+            <div class="networking-header">
+                <h1><span data-i18n="nav.networking">Réseautage</span> <span class="text-gradient">TechDZ</span></h1>
+                <p data-i18n="networking.pageSubtitle">Connectez-vous avec les professionnels IT en Algérie</p>
+            </div>
+
+            <div class="online-now" id="onlineNowSection" style="display:none;">
+                <div class="online-now-header">
+                    <span class="online-pulse"><span></span></span>
+                    <h2 data-i18n="online.now">En ligne maintenant</h2>
+                    <span class="online-now-count" id="onlineNowCount">0</span>
+                </div>
+                <div class="online-now-list" id="onlineNowList"></div>
+            </div>
+
+            <div class="networking-tools">
+                <input type="text" id="searchInput" placeholder="Rechercher un membre..." data-i18n-placeholder="networking.searchPlaceholder">
+                <select id="cityFilter">
+                    <option value="" data-i18n="networking.allCities">Toutes les villes</option>
+                </select>
+                <select id="skillFilter">
+                    <option value="" data-i18n="networking.allSkills">Tous les domaines</option>
+                </select>
+            </div>
+
+            <div class="members-count" id="membersCount"></div>
+            <div id="membersGrid" class="members-grid">
+                <div class="loading"><i class="fas fa-spinner fa-spin"></i> <span data-i18n="networking.loading">Chargement des membres...</span></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/auth.js?v=20260807"></script>
+    <script src="assets/js/db.js?v=20260807"></script>
+    <script src="assets/js/translations.js?v=20260807"></script>
+    <script src="assets/js/i18n.js?v=20260807"></script>
+    <script src="assets/js/script.js?v=20260807"></script>
+
+    <script src="assets/js/widgets.js?v=20260807"></script>
+    <script>
+        (async () => {
+            Auth.init();
+            let currentUser = null;
+            const { user } = await Auth.getUser();
+            if (user && !Auth.isEmailConfirmed(user)) {
+                await Auth.signOut('login.html');
+                return;
+            }
+            if (user) {
+                currentUser = user;
+                document.getElementById('authLoggedOut').style.display = 'none';
+                document.getElementById('authLoggedIn').style.display = 'flex';
+            }
+
+            const grid = document.getElementById('membersGrid');
+            const countEl = document.getElementById('membersCount');
+            const searchInput = document.getElementById('searchInput');
+            const cityFilter = document.getElementById('cityFilter');
+            const skillFilter = document.getElementById('skillFilter');
+
+            function truncate(str, len) {
+                return str && str.length > len ? str.substring(0, len) + '...' : str;
+            }
+
+            function getInitials(name) {
+                return (name || 'U').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+            }
+
+            async function loadCities() {
+                const { data } = await DB.getMemberCities();
+                if (data && data.length > 0) {
+                    cityFilter.innerHTML = `<option value="">${t('networking.allCities')}</option>` +
+                        data.map(c => `<option value="${c}">${c}</option>`).join('');
+                }
+            }
+
+            async function loadSkills() {
+                const { data } = await DB.getMemberSkills();
+                if (data && data.length > 0) {
+                    skillFilter.innerHTML = `<option value="">${t('networking.allSkills')}</option>` +
+                        data.map(s => `<option value="${s}">${s}</option>`).join('');
+                }
+            }
+
+            async function loadMembers() {
+                const search = searchInput.value.trim();
+                const city = cityFilter.value;
+                const skill = skillFilter.value;
+
+                const { data, error, count } = await DB.getMembers({ search, city });
+
+                if (error) {
+                    grid.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>${t('common.error')}: ${error.message}</p></div>`;
+                    countEl.textContent = '';
+                    return;
+                }
+
+                const noun = (count || 0) > 1 ? ' ' + t('networking.foundMany') : ' ' + t('networking.foundOne');
+                countEl.textContent = data && data.length > 0 ? `${count || data.length}${noun}` : '';
+
+                if (!data || data.length === 0) {
+                    grid.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><p>' + t('networking.empty') + '</p></div>';
+                    return;
+                }
+
+                // Filter by skill client-side
+                let filtered = data;
+                if (skill) {
+                    filtered = data.filter(m => (m.skills || []).some(s => s.toLowerCase() === skill.toLowerCase()));
+                    countEl.textContent = `${filtered.length}${filtered.length > 1 ? ' ' + t('networking.foundMany') : ' ' + t('networking.foundOne')}`;
+                    if (filtered.length === 0) {
+                        grid.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><p>' + t('networking.emptyDomain') + '</p></div>';
+                        return;
+                    }
+                }
+
+                // Tri : en ligne en premier (par dernière activité), puis hors ligne
+                const onlineIds = (window.Online && window.Online.userSet) || new Set();
+                filtered = [...filtered].sort((a, b) => {
+                    const aOn = onlineIds.has(a.id) ? 1 : 0;
+                    const bOn = onlineIds.has(b.id) ? 1 : 0;
+                    if (aOn !== bOn) return bOn - aOn;
+                    const aT = a.last_active ? new Date(a.last_active).getTime() : 0;
+                    const bT = b.last_active ? new Date(b.last_active).getTime() : 0;
+                    return bT - aT;
+                });
+
+                let lastSection = '';
+                grid.innerHTML = filtered.map(m => {
+                    const online = onlineIds.has(m.id);
+                    let separator = '';
+                    if (online && lastSection !== 'online') {
+                        separator = `<div class="members-section-sep"><i class="fas fa-circle online-sep-dot"></i>${t('online.online', 'En ligne')}</div>`;
+                        lastSection = 'online';
+                    } else if (!online && lastSection === 'online') {
+                        separator = `<div class="members-section-sep offline">${t('online.offline', 'Hors ligne')}</div>`;
+                        lastSection = 'offline';
+                    }
+                    const roleLabel = m.role === 'admin' ? t('common.admin') : m.role === 'moderator' ? t('common.moderator') : t('common.member');
+                    const skills = m.skills || [];
+                    return `
+                        ${separator}
+                        <div class="member-card ${online ? 'is-online' : ''}">
+                            ${online ? '<span class="online-card-dot"><span></span></span>' : ''}
+                            <div class="member-avatar">${getInitials(m.full_name)}</div>
+                            <span class="member-role-tag ${m.role || 'member'}">${roleLabel}</span>
+                            <h3>${m.full_name || t('common.user')}</h3>
+                            <div class="member-job">${m.job_title || ''}</div>
+                            ${m.city ? `<div class="member-city"><i class="fas fa-map-marker-alt"></i>${m.city}</div>` : ''}
+                            ${skills.length > 0 ? `
+                            <div class="member-skills">
+                                ${skills.map(s => `<span class="member-skill-tag">${s}</span>`).join('')}
+                            </div>` : ''}
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            let searchTimeout;
+            searchInput.addEventListener('input', () => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(loadMembers, 300);
+            });
+            cityFilter.addEventListener('change', loadMembers);
+            skillFilter.addEventListener('change', loadMembers);
+
+            await Promise.all([loadCities(), loadSkills(), loadMembers()]);
+
+            let onlineRefreshTimer;
+            document.addEventListener('online-updated', () => {
+                clearTimeout(onlineRefreshTimer);
+                onlineRefreshTimer = setTimeout(loadMembers, 400);
+            });
+        })();
+    </script>
+<script src="assets/js/effects/themes.js" defer data-base=""></script>
+</body>
+</html>
+

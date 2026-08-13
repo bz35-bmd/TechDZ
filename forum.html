@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="title.forum">Forum — TechDZ</title>
+    <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .forum-page { padding: 100px 0 80px; min-height: 100vh; }
+        .forum-layout { display: grid; grid-template-columns: 260px 1fr; gap: 32px; }
+
+        /* Sidebar */
+        .forum-sidebar { position: sticky; top: 100px; align-self: start; }
+        .forum-sidebar-card {
+            padding: 24px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            margin-bottom: 20px;
+        }
+        .forum-sidebar-card h3 {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+        .category-list { display: flex; flex-direction: column; gap: 4px; }
+        .category-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+        .category-link:hover { background: rgba(59,130,246,0.06); color: var(--text-primary); }
+        .category-link.active { background: rgba(59,130,246,0.1); color: var(--primary); font-weight: 600; }
+        .category-link i { width: 18px; text-align: center; font-size: 0.8rem; }
+        .category-link .cat-count {
+            margin-left: auto;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            background: var(--bg-card);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        /* Main */
+        .forum-main { min-width: 0; }
+        .forum-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+        .forum-header h1 { font-size: 1.75rem; font-weight: 800; }
+        .forum-search {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            width: 300px;
+        }
+        .forum-search input {
+            background: transparent;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            width: 100%;
+            outline: none;
+        }
+        .forum-search input::placeholder { color: var(--text-muted); }
+        .forum-search:focus-within { border-color: var(--primary); }
+
+        /* Post List */
+        .post-list { display: flex; flex-direction: column; gap: 12px; }
+        .post-card {
+            display: flex;
+            gap: 16px;
+            padding: 20px 24px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .post-card:hover { border-color: var(--border-hover); transform: translateY(-1px); }
+        .post-card.pinned { border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.02); }
+        .post-votes-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            min-width: 48px;
+        }
+        .vote-btn-sm {
+            width: 36px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            transition: all 0.15s;
+        }
+        .vote-btn-sm:hover { background: rgba(59,130,246,0.1); color: var(--primary); }
+        .vote-count-sm { font-size: 1rem; font-weight: 700; }
+        .post-body { flex: 1; min-width: 0; }
+        .post-tags-row { display: flex; gap: 6px; margin-bottom: 6px; flex-wrap: wrap; }
+        .post-tag {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.68rem;
+            font-weight: 600;
+            font-family: var(--font-mono);
+            background: rgba(59,130,246,0.08);
+            color: var(--primary);
+            border: 1px solid rgba(59,130,246,0.12);
+        }
+        .post-title-link { font-size: 1.05rem; font-weight: 700; margin-bottom: 4px; line-height: 1.4; }
+        .post-title-link:hover { color: var(--primary); }
+        .post-excerpt { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .post-meta-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+        }
+        .post-author-sm { display: flex; align-items: center; gap: 6px; }
+        .author-avatar-sm {
+            width: 22px; height: 22px; border-radius: 4px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.55rem; font-weight: 700; color: #fff;
+            background: var(--gradient-primary); flex-shrink: 0;
+        }
+        .solved-badge { color: var(--secondary); font-weight: 600; }
+        .pinned-badge { color: var(--amber); font-weight: 600; }
+
+        /* New Post Button */
+        .new-post-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: var(--gradient-primary);
+            color: #fff;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        .new-post-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px var(--primary-glow); }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 5000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal {
+            width: 100%;
+            max-width: 640px;
+            max-height: 90vh;
+            overflow-y: auto;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: 32px;
+        }
+        .modal h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 24px; }
+        .modal .form-group { margin-bottom: 16px; }
+        .modal .form-group label { font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; display: block; }
+        .modal .form-group input, .modal .form-group select, .modal .form-group textarea {
+            width: 100%; padding: 12px 16px; background: var(--bg-card);
+            border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+            color: var(--text-primary); font-size: 0.95rem; font-family: inherit;
+        }
+        .modal .form-group textarea { min-height: 200px; resize: vertical; font-family: var(--font-mono); font-size: 0.9rem; }
+        .modal .form-group input:focus, .modal .form-group textarea:focus, .modal .form-group select:focus {
+            border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); outline: none;
+        }
+        .modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px; }
+        .modal-close {
+            position: absolute; top: 16px; right: 16px;
+            width: 36px; height: 36px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-muted); transition: all 0.2s;
+        }
+        .modal-close:hover { background: rgba(239,68,68,0.1); color: var(--red); }
+
+        /* Post Detail */
+        .post-detail { display: none; }
+        .post-detail.active { display: block; }
+        .post-list-view.hidden { display: none; }
+        .back-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            font-size: 0.9rem; color: var(--text-secondary);
+            margin-bottom: 20px; font-weight: 500;
+        }
+        .back-btn:hover { color: var(--primary); }
+        .detail-card {
+            padding: 32px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            margin-bottom: 24px;
+        }
+        .detail-header { display: flex; gap: 16px; margin-bottom: 16px; }
+        .detail-votes {
+            display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 48px;
+        }
+        .detail-content { flex: 1; }
+        .detail-content .post-tags-row { margin-bottom: 12px; }
+        .detail-content h1 { font-size: 1.5rem; font-weight: 800; margin-bottom: 12px; line-height: 1.3; }
+        .detail-text {
+            font-size: 0.95rem; color: var(--text-secondary); line-height: 1.8;
+            margin-bottom: 20px; white-space: pre-wrap;
+        }
+        .detail-text code {
+            background: rgba(59,130,246,0.08); padding: 2px 6px; border-radius: 4px;
+            font-family: var(--font-mono); font-size: 0.85rem; color: var(--primary);
+        }
+        .detail-text pre {
+            background: rgba(0,0,0,0.3); padding: 16px; border-radius: var(--radius-sm);
+            overflow-x: auto; margin: 12px 0; font-family: var(--font-mono); font-size: 0.85rem;
+        }
+        .detail-meta {
+            display: flex; align-items: center; gap: 16px; padding-top: 16px;
+            border-top: 1px solid var(--border-color); font-size: 0.82rem; color: var(--text-muted);
+        }
+
+        /* Replies */
+        .replies-section h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; }
+        .reply-card {
+            display: flex; gap: 16px; padding: 20px;
+            background: var(--bg-secondary); border: 1px solid var(--border-color);
+            border-radius: var(--radius-md); margin-bottom: 12px;
+        }
+        .reply-card.accepted { border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.02); }
+        .reply-body { flex: 1; }
+        .reply-text { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 12px; white-space: pre-wrap; }
+        .reply-meta { font-size: 0.78rem; color: var(--text-muted); display: flex; gap: 16px; align-items: center; }
+
+        /* Reply Form */
+        .reply-form-card {
+            padding: 24px; background: var(--bg-secondary);
+            border: 1px solid var(--border-color); border-radius: var(--radius-lg);
+        }
+        .reply-form-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 12px; }
+        .reply-form-card textarea {
+            width: 100%; min-height: 120px; padding: 14px; background: var(--bg-card);
+            border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+            color: var(--text-primary); font-family: var(--font-mono); font-size: 0.9rem;
+            resize: vertical; margin-bottom: 12px;
+        }
+        .reply-form-card textarea:focus { border-color: var(--primary); outline: none; }
+
+        .loading { text-align: center; padding: 40px; color: var(--text-muted); }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+        .empty-state i { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.3; display: block; }
+
+        @media (max-width: 768px) {
+            .forum-layout { grid-template-columns: 1fr; }
+            .forum-sidebar { display: none; }
+            .forum-header { flex-direction: column; gap: 12px; align-items: stretch; }
+            .forum-search { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar scrolled">
+        <div class="container nav-container">
+            <a href="index.html" class="nav-logo"><img src="assets/img/logo.svg" alt="TechDZ" height="32"></a>
+            <div class="nav-links">
+                <a href="index.html#features" class="nav-link" data-i18n="nav.features">Fonctionnalités</a>
+                <a href="forum.html" class="nav-link" style="color:var(--primary)" data-i18n="nav.forum">Forum</a>
+                <a href="jobs.html" class="nav-link" data-i18n="nav.jobs">Emplois</a>
+                <a href="training.html" class="nav-link" data-i18n="nav.training">Formations</a>
+                <a href="news.html" class="nav-link" data-i18n="nav.news">Actualités</a>
+                <a href="events.html" class="nav-link" data-i18n="nav.events">Événements</a>
+                <a href="networking.html" class="nav-link" data-i18n="nav.networking">Réseautage</a>
+            </div>
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+<div class="theme-picker">
+    <button class="theme-picker-btn" id="themePickerBtn" aria-label="Choisir le thème" data-i18n-aria="theme.choose" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-palette"></i>
+    </button>
+    <div class="theme-picker-menu" id="themePickerMenu" role="menu">
+        <div class="theme-picker-header" data-i18n="theme.title">Thème du site</div>
+        <button class="theme-option" data-theme-option="code" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-code"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.code">Code</strong><small data-i18n="theme.codeDesc">Encre liquide + &lt;/&gt;</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="signal" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-signal"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.signal">Signal</strong><small data-i18n="theme.signalDesc">Réseau + nœud</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="fusion" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-fusion"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.fusion">Fusion</strong><small data-i18n="theme.fusionDesc">Encre + nœud</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="dunes" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-dunes"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.dunes">Dunes</strong><small data-i18n="theme.dunesDesc">Sahara + réseau or</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="nuit" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-nuit"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.nuit">Nuit</strong><small data-i18n="theme.nuitDesc">Étoiles + réseau indigo</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+    </div>
+</div>
+                <div class="lang-switcher" id="langSwitcher">
+                    <button class="lang-btn" id="langBtn">
+                        <span class="lang-flag">FR</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="lang-dropdown" id="langDropdown">
+                        <button class="lang-option active" data-lang="fr">
+                            <span class="lang-flag">FR</span>
+                            <span>Français</span>
+                        </button>
+                        <button class="lang-option" data-lang="en">
+                            <span class="lang-flag">EN</span>
+                            <span>English</span>
+                        </button>
+                        <button class="lang-option" data-lang="ar">
+                            <span class="lang-flag">AR</span>
+                            <span>العربية</span>
+                        </button>
+                    </div>
+                </div>                <div id="authLoggedOut"><a href="login.html" class="btn btn-outline btn-sm" data-i18n="nav.login">Se connecter</a></div>
+                <div id="authLoggedIn" style="display:none;"><a href="profile.html" class="btn btn-primary btn-sm">Mon profil</a></div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="forum-page">
+        <div class="container">
+            <div class="forum-layout">
+                <!-- Sidebar -->
+                <aside class="forum-sidebar">
+                    <div class="forum-sidebar-card">
+                        <h3 data-i18n="forum.categories">Catégories</h3>
+                        <div class="category-list" id="categoryList">
+                            <a href="#" class="category-link active" data-cat="all">
+                                <i class="fas fa-layer-group"></i> <span data-i18n="forum.allPosts">Tous les posts</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="forum-sidebar-card">
+                        <h3 data-i18n="forum.stats">Statistiques</h3>
+                        <div style="display:flex;flex-direction:column;gap:8px;font-size:0.85rem;">
+                            <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-muted)" data-i18n="forum.posts">Posts</span><strong id="totalPosts">0</strong></div>
+                            <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-muted)" data-i18n="forum.members">Membres</span><strong id="totalMembers">0</strong></div>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Main -->
+                <div class="forum-main">
+                    <!-- LIST VIEW -->
+                    <div class="post-list-view" id="listView">
+                        <div class="forum-header">
+                            <h1 data-i18n="forum.heading">Forum</h1>
+                            <div style="display:flex;gap:12px;align-items:center;">
+                                <div class="forum-search">
+                                    <i class="fas fa-search" style="color:var(--text-muted)"></i>
+                                    <input type="text" placeholder="Rechercher..." id="searchInput" data-i18n-placeholder="forum.searchPlaceholder">
+                                </div>
+                                <button class="new-post-btn" id="newPostBtn">
+                                    <i class="fas fa-plus"></i> <span data-i18n="forum.newPost">Nouveau post</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="post-list" id="postList">
+                            <div class="loading"><i class="fas fa-spinner fa-spin"></i> <span data-i18n="forum.loading">Chargement...</span></div>
+                        </div>
+                    </div>
+
+                    <!-- DETAIL VIEW -->
+                    <div class="post-detail" id="detailView">
+                        <a href="#" class="back-btn" id="backBtn"><i class="fas fa-arrow-left"></i> <span data-i18n="forum.back">Retour au forum</span></a>
+                        <div class="detail-card" id="detailCard"></div>
+                        <div class="replies-section">
+                            <h2 id="repliesTitle" data-i18n="forum.replies">Réponses</h2>
+                            <div id="repliesList"></div>
+                            <div class="reply-form-card" id="replyFormCard" style="display:none; margin-top: 20px;">
+                                <h3 data-i18n="forum.yourReply">Votre réponse</h3>
+                                <textarea id="replyInput" placeholder="Écrivez votre réponse... (Markdown supporté)" data-i18n-placeholder="forum.replyPlaceholder"></textarea>
+                                <button class="btn btn-primary" id="submitReplyBtn"><i class="fas fa-reply"></i> <span data-i18n="forum.publish">Publier</span></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Post Modal -->
+    <div class="modal-overlay" id="newPostModal">
+        <div class="modal" style="position:relative;">
+            <button class="modal-close" id="closeModal"><i class="fas fa-times"></i></button>
+            <h2 data-i18n="forum.modalTitle">Nouveau post</h2>
+            <form id="newPostForm">
+                <div class="form-group">
+                    <label data-i18n="forum.category">Catégorie</label>
+                    <select id="postCategory" required></select>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="forum.titleLabel">Titre</label>
+                    <input type="text" id="postTitle" placeholder="Votre question ou discussion..." required data-i18n-placeholder="forum.titlePlaceholder">
+                </div>
+                <div class="form-group">
+                    <label data-i18n="forum.content">Contenu</label>
+                    <textarea id="postContent" placeholder="Décrivez votre question en détail... (Markdown supporté)" required data-i18n-placeholder="forum.contentPlaceholder"></textarea>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="forum.tags">Tags (séparés par des virgules)</label>
+                    <input type="text" id="postTags" placeholder="ex: cisco, bgp, réseau" data-i18n-placeholder="forum.tagsPlaceholder">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" id="cancelModal"><span data-i18n="common.cancel">Annuler</span></button>
+                    <button type="submit" class="btn btn-primary" id="submitPostBtn"><i class="fas fa-paper-plane"></i> <span data-i18n="forum.publish">Publier</span></button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/auth.js?v=20260807"></script>
+    <script src="assets/js/db.js?v=20260807"></script>
+    <script src="assets/js/translations.js?v=20260807"></script>
+    <script src="assets/js/i18n.js?v=20260807"></script>
+    <script src="assets/js/script.js?v=20260807"></script>
+
+    <script src="assets/js/widgets.js?v=20260807"></script>
+    <script>
+        (async () => {
+            Auth.init();
+            let currentUser = null;
+            let currentCategory = null;
+
+            const { user } = await Auth.getUser();
+            if (user && !Auth.isEmailConfirmed(user)) {
+                await Auth.signOut('login.html');
+                return;
+            }
+            if (user) {
+                currentUser = user;
+                document.getElementById('authLoggedOut').style.display = 'none';
+                document.getElementById('authLoggedIn').style.display = 'flex';
+                document.getElementById('replyFormCard').style.display = 'block';
+            }
+
+            // ==========================================
+            // Load Categories
+            // ==========================================
+            const { data: categories } = await DB.getForumCategories();
+            const catList = document.getElementById('categoryList');
+            const postCategory = document.getElementById('postCategory');
+
+            if (categories) {
+                categories.forEach(cat => {
+                    const link = document.createElement('a');
+                    link.href = '#';
+                    link.className = 'category-link';
+                    link.dataset.cat = cat.id;
+                    link.innerHTML = `<i class="${cat.icon}"></i> ${cat.name} <span class="cat-count">${cat.post_count}</span>`;
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        currentCategory = cat.id;
+                        document.querySelectorAll('.category-link').forEach(l => l.classList.remove('active'));
+                        link.classList.add('active');
+                        loadPosts();
+                    });
+                    catList.appendChild(link);
+
+                    const opt = document.createElement('option');
+                    opt.value = cat.id;
+                    opt.textContent = cat.name;
+                    postCategory.appendChild(opt);
+                });
+            }
+
+            // "All" category click
+            catList.querySelector('[data-cat="all"]').addEventListener('click', (e) => {
+                e.preventDefault();
+                currentCategory = null;
+                document.querySelectorAll('.category-link').forEach(l => l.classList.remove('active'));
+                e.currentTarget.classList.add('active');
+                loadPosts();
+            });
+
+            // ==========================================
+            // Load Posts
+            // ==========================================
+            async function loadPosts(search = '') {
+                const { data, error, count } = await DB.getForumPosts({ category: currentCategory, search });
+                console.log('Forum posts result:', { data, error, count: data?.length });
+                const list = document.getElementById('postList');
+                document.getElementById('totalPosts').textContent = count || 0;
+
+                if (error) {
+                    console.error('Error loading posts:', error);
+                    list.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>${t('common.error')}: ${error.message}</p></div>`;
+                    return;
+                }
+
+                if (!data || data.length === 0) {
+                    list.innerHTML = '<div class="empty-state"><i class="fas fa-comments"></i><p>' + t('forum.noPosts') + '</p></div>';
+                    return;
+                }
+
+                list.innerHTML = data.map(p => `
+                    <div class="post-card ${p.is_pinned ? 'pinned' : ''}" onclick="viewPost(${p.id})">
+                        <div class="post-votes-col">
+                            <button class="vote-btn-sm" onclick="event.stopPropagation(); vote(${p.id}, 1)"><i class="fas fa-caret-up"></i></button>
+                            <span class="vote-count-sm">${p.votes}</span>
+                            <button class="vote-btn-sm" onclick="event.stopPropagation(); vote(${p.id}, -1)"><i class="fas fa-caret-down"></i></button>
+                        </div>
+                        <div class="post-body">
+                            <div class="post-tags-row">
+                                ${p.is_pinned ? '<span class="pinned-badge"><i class="fas fa-thumbtack"></i> ' + t('forum.pinned') + '</span>' : ''}
+                                ${p.category ? `<span class="post-tag" style="background:rgba(59,130,246,0.08);color:var(--primary);">${p.category.name}</span>` : ''}
+                                ${(p.tags || []).map(t => `<span class="post-tag">${t}</span>`).join('')}
+                                ${p.is_solved ? '<span class="solved-badge"><i class="fas fa-check-circle"></i> ' + t('forum.solved') + '</span>' : ''}
+                            </div>
+                            <div class="post-title-link">${p.title}</div>
+                            <p class="post-excerpt">${p.content.substring(0, 150)}...</p>
+                            <div class="post-meta-row">
+                                <span class="post-author-sm">
+                                    <span class="author-avatar-sm">${(p.author?.full_name || 'U')[0]}</span>
+                                    ${p.author?.full_name || t('common.anonymous')}
+                                </span>
+                                <span><i class="fas fa-comment"></i> ${p.reply_count} ${t('forum.responses')}</span>
+                                <span><i class="fas fa-eye"></i> ${p.views} ${t('forum.views')}</span>
+                                <span>${timeAgo(p.created_at)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // ==========================================
+            // View Post Detail
+            // ==========================================
+            window.viewPost = async (postId) => {
+                window._currentPostId = postId;
+                document.getElementById('listView').classList.add('hidden');
+                document.getElementById('detailView').classList.add('active');
+
+                const { data: post } = await DB.getForumPost(postId);
+                if (!post) return;
+
+                const card = document.getElementById('detailCard');
+                card.innerHTML = `
+                    <div class="detail-header">
+                        <div class="detail-votes">
+                            <button class="vote-btn-sm" onclick="vote(${post.id}, 1)"><i class="fas fa-caret-up"></i></button>
+                            <span class="vote-count-sm" id="detailVotes">${post.votes}</span>
+                            <button class="vote-btn-sm" onclick="vote(${post.id}, -1)"><i class="fas fa-caret-down"></i></button>
+                        </div>
+                        <div class="detail-content">
+                            <div class="post-tags-row">
+                                ${post.category ? `<span class="post-tag">${post.category.name}</span>` : ''}
+                                ${(post.tags || []).map(t => `<span class="post-tag">${t}</span>`).join('')}
+                                ${post.is_solved ? '<span class="solved-badge"><i class="fas fa-check-circle"></i> ' + t('forum.solved') + '</span>' : ''}
+                            </div>
+                            <h1>${post.title}</h1>
+                            <div class="detail-text">${formatContent(post.content)}</div>
+                            <div class="detail-meta">
+                                <span class="post-author-sm">
+                                    <span class="author-avatar-sm">${(post.author?.full_name || 'U')[0]}</span>
+                                    <strong>${post.author?.full_name || t('common.anonymous')}</strong>
+                                    ${post.author?.role === 'admin' ? '<span class="role-badge admin" style="font-size:0.65rem;">' + t('common.admin') + '</span>' : ''}
+                                </span>
+                                <span>${new Date(post.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                                <span><i class="fas fa-eye"></i> ${post.views} ${t('forum.views')}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Load replies
+                const { data: replies } = await DB.getForumReplies(postId);
+                const repliesList = document.getElementById('repliesList');
+                const lang = document.documentElement.getAttribute('lang') || 'fr';
+                const tr = (window.translations && window.translations[lang]) || window.translations.fr;
+                document.getElementById('repliesTitle').textContent = `${tr.forum.replies} (${replies?.length || 0})`;
+
+                if (replies && replies.length > 0) {
+                    repliesList.innerHTML = replies.map(r => `
+                        <div class="reply-card ${r.is_accepted ? 'accepted' : ''}">
+                            <div class="post-votes-col">
+                                <button class="vote-btn-sm"><i class="fas fa-caret-up"></i></button>
+                                <span class="vote-count-sm">${r.votes}</span>
+                                <button class="vote-btn-sm"><i class="fas fa-caret-down"></i></button>
+                            </div>
+                            <div class="reply-body">
+                                <div class="reply-text">${formatContent(r.content)}</div>
+                                <div class="reply-meta">
+                                    <span class="post-author-sm">
+                                        <span class="author-avatar-sm">${(r.author?.full_name || 'U')[0]}</span>
+                                        <strong>${r.author?.full_name || t('common.anonymous')}</strong>
+                                    </span>
+                                    <span>${timeAgo(r.created_at)}</span>
+                                    ${r.is_accepted ? '<span class="solved-badge"><i class="fas fa-check-circle"></i> ' + t('forum.accepted') + '</span>' : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    repliesList.innerHTML = '<div class="empty-state" style="padding:30px;"><p>' + t('forum.noReplies') + '</p></div>';
+                }
+
+                window.scrollTo(0, 0);
+            };
+
+            // Back to list
+            document.getElementById('backBtn').addEventListener('click', (e) => {
+                e.preventDefault();
+                document.getElementById('listView').classList.remove('hidden');
+                document.getElementById('detailView').classList.remove('active');
+            });
+
+            // ==========================================
+            // Submit Reply
+            // ==========================================
+            document.getElementById('submitReplyBtn').addEventListener('click', async () => {
+                const content = document.getElementById('replyInput').value.trim();
+                if (!content) return;
+
+                if (!currentUser) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const btn = document.getElementById('submitReplyBtn');
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                btn.disabled = true;
+
+                await DB.createForumReply({
+                    content,
+                    author_id: currentUser.id,
+                    post_id: parseInt(window._currentPostId || 0)
+                });
+
+                document.getElementById('replyInput').value = '';
+                btn.innerHTML = '<i class="fas fa-reply"></i> ' + t('forum.publish');
+                btn.disabled = false;
+                if (window._currentPostId) viewPost(window._currentPostId);
+            });
+
+            // ==========================================
+            // New Post Modal
+            // ==========================================
+            document.getElementById('newPostBtn').addEventListener('click', () => {
+                if (!currentUser) { window.location.href = 'login.html'; return; }
+                document.getElementById('newPostModal').classList.add('open');
+            });
+            document.getElementById('closeModal').addEventListener('click', () => {
+                document.getElementById('newPostModal').classList.remove('open');
+            });
+            document.getElementById('cancelModal').addEventListener('click', () => {
+                document.getElementById('newPostModal').classList.remove('open');
+            });
+
+            document.getElementById('newPostForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = document.getElementById('submitPostBtn');
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                btn.disabled = true;
+
+                const tags = document.getElementById('postTags').value.split(',').map(t => t.trim()).filter(Boolean);
+
+                const { data, error } = await DB.createForumPost({
+                    title: document.getElementById('postTitle').value.trim(),
+                    content: document.getElementById('postContent').value.trim(),
+                    category_id: parseInt(document.getElementById('postCategory').value),
+                    author_id: currentUser.id,
+                    tags
+                });
+
+                if (!error && data) {
+                    document.getElementById('newPostModal').classList.remove('open');
+                    document.getElementById('newPostForm').reset();
+                    loadPosts();
+                    viewPost(data.id);
+                }
+
+                btn.innerHTML = '<i class="fas fa-paper-plane"></i> ' + t('forum.publish');
+                btn.disabled = false;
+            });
+
+            // Search
+            let searchTimeout;
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => loadPosts(e.target.value), 300);
+            });
+
+            // Helpers
+            function timeAgo(date) {
+                const s = Math.floor((Date.now() - new Date(date)) / 1000);
+                if (s < 60) return t('common.justNow');
+                if (s < 3600) return t('common.ago') + ' ' + Math.floor(s/60) + t('common.min');
+                if (s < 86400) return t('common.ago') + ' ' + Math.floor(s/3600) + t('common.hr');
+                return t('common.ago') + ' ' + Math.floor(s/86400) + t('common.day');
+            }
+
+            function formatContent(text) {
+                return text
+                    .replace(/```([\s\S]*?)```/g, '<pre>$1</pre>')
+                    .replace(/`([^`]+)`/g, '<code>$1</code>')
+                    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\n/g, '<br>');
+            }
+
+            window.vote = async (postId, value) => {
+                if (!currentUser) { window.location.href = 'login.html'; return; }
+                await DB.votePost(postId, currentUser.id, value);
+                loadPosts();
+            };
+
+            // Load initial
+            await loadPosts();
+            const stats = await DB.getAdminStats();
+            if (stats) document.getElementById('totalMembers').textContent = stats.users || 0;
+        })();
+    </script>
+<script src="assets/js/effects/themes.js" defer data-base=""></script>
+</body>
+</html>
+
+

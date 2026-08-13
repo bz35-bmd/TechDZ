@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="title.jobs">Emplois IT — TechDZ</title>
+    <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .jobs-page { padding: 100px 0 80px; min-height: 100vh; }
+        .jobs-header { text-align: center; max-width: 640px; margin: 0 auto 48px; }
+        .jobs-header h1 { font-size: 2.25rem; font-weight: 800; margin-bottom: 12px; }
+        .jobs-header p { color: var(--text-secondary); font-size: 1.05rem; }
+
+        .jobs-filters {
+            display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 32px;
+            padding: 20px; background: var(--bg-secondary);
+            border: 1px solid var(--border-color); border-radius: var(--radius-lg);
+        }
+        .filter-group { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 160px; }
+        .filter-group label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+        .filter-group select, .filter-group input {
+            padding: 10px 14px; background: var(--bg-card);
+            border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+            color: var(--text-primary); font-size: 0.9rem; appearance: none; cursor: pointer;
+        }
+        .filter-group select:focus, .filter-group input:focus { border-color: var(--primary); outline: none; }
+        .jobs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .job-card-full {
+            padding: 28px; background: var(--bg-secondary);
+            border: 1px solid var(--border-color); border-radius: var(--radius-lg);
+            transition: all 0.2s; display: flex; flex-direction: column;
+        }
+        .job-card-full:hover { border-color: var(--border-hover); transform: translateY(-2px); }
+        .job-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+        .job-company-info { display: flex; align-items: center; gap: 12px; }
+        .company-logo-lg {
+            width: 48px; height: 48px; border-radius: var(--radius-sm);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; font-weight: 700; color: #fff;
+            background: var(--gradient-primary); flex-shrink: 0;
+        }
+        .company-logo-lg.green { background: var(--gradient-secondary); }
+        .company-logo-lg.purple { background: linear-gradient(135deg, #8B5CF6, #A78BFA); }
+        .company-logo-lg.amber { background: linear-gradient(135deg, #F59E0B, #FBBF24); }
+        .job-company-info strong { font-size: 0.95rem; }
+        .job-company-info span { display: block; font-size: 0.8rem; color: var(--text-muted); }
+        .job-type-badge {
+            padding: 4px 12px; border-radius: var(--radius-full);
+            font-size: 0.72rem; font-weight: 600;
+        }
+        .job-type-badge.remote { background: rgba(16,185,129,0.1); color: var(--secondary); }
+        .job-type-badge.hybrid { background: rgba(59,130,246,0.1); color: var(--primary); }
+        .job-type-badge.onsite { background: rgba(245,158,11,0.1); color: var(--amber); }
+        .job-card-full h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 10px; }
+        .job-desc { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 14px; flex: 1; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .job-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+        .job-tags span {
+            padding: 3px 10px; border-radius: 4px; font-size: 0.72rem; font-weight: 500;
+            font-family: var(--font-mono); background: rgba(139,92,246,0.08);
+            color: var(--accent); border: 1px solid rgba(139,92,246,0.12);
+        }
+        .job-card-bottom {
+            display: flex; align-items: center; justify-content: space-between;
+            padding-top: 14px; border-top: 1px solid var(--border-color);
+        }
+        .job-salary-lg { font-size: 0.95rem; font-weight: 700; color: var(--secondary); }
+        .job-date-lg { font-size: 0.78rem; color: var(--text-muted); }
+
+        .new-job-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 12px 24px; background: var(--gradient-primary);
+            color: #fff; border-radius: var(--radius-md);
+            font-weight: 600; font-size: 0.9rem; transition: all 0.2s;
+        }
+        .new-job-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px var(--primary-glow); }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 24px; }
+        .modal-overlay.open { display: flex; }
+        .modal { width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-xl); padding: 32px; position: relative; }
+        .modal h2 { font-size: 1.25rem; font-weight: 700; margin-bottom: 24px; }
+        .modal .form-group { margin-bottom: 14px; }
+        .modal .form-group label { font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; display: block; }
+        .modal .form-group input, .modal .form-group select, .modal .form-group textarea { width: 100%; padding: 10px 14px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-sm); color: var(--text-primary); font-size: 0.9rem; font-family: inherit; }
+        .modal .form-group input:focus, .modal .form-group select:focus, .modal .form-group textarea:focus { border-color: var(--primary); outline: none; }
+        .modal .form-group textarea { min-height: 100px; resize: vertical; }
+        .modal .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .modal-close { position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-muted); }
+        .modal-close:hover { background: rgba(239,68,68,0.1); color: var(--red); }
+        .modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px; }
+        .loading { text-align: center; padding: 40px; color: var(--text-muted); }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); grid-column: 1/-1; }
+        .empty-state i { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.3; display: block; }
+        @media (max-width: 768px) { .jobs-grid { grid-template-columns: 1fr; } .jobs-filters { flex-direction: column; } .modal .form-row { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <nav class="navbar scrolled">
+        <div class="container nav-container">
+            <a href="index.html" class="nav-logo"><img src="assets/img/logo.svg" alt="TechDZ" height="32"></a>
+            <div class="nav-links">
+                <a href="index.html#features" class="nav-link" data-i18n="nav.features">Fonctionnalités</a>
+                <a href="forum.html" class="nav-link" data-i18n="nav.forum">Forum</a>
+                <a href="jobs.html" class="nav-link" style="color:var(--primary)" data-i18n="nav.jobs">Emplois</a>
+                <a href="training.html" class="nav-link" data-i18n="nav.training">Formations</a>
+                <a href="news.html" class="nav-link" data-i18n="nav.news">Actualités</a>
+                <a href="events.html" class="nav-link" data-i18n="nav.events">Événements</a>
+                <a href="networking.html" class="nav-link" data-i18n="nav.networking">Réseautage</a>
+            </div>
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+<div class="theme-picker">
+    <button class="theme-picker-btn" id="themePickerBtn" aria-label="Choisir le thème" data-i18n-aria="theme.choose" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-palette"></i>
+    </button>
+    <div class="theme-picker-menu" id="themePickerMenu" role="menu">
+        <div class="theme-picker-header" data-i18n="theme.title">Thème du site</div>
+        <button class="theme-option" data-theme-option="code" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-code"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.code">Code</strong><small data-i18n="theme.codeDesc">Encre liquide + &lt;/&gt;</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="signal" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-signal"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.signal">Signal</strong><small data-i18n="theme.signalDesc">Réseau + nœud</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="fusion" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-fusion"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.fusion">Fusion</strong><small data-i18n="theme.fusionDesc">Encre + nœud</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="dunes" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-dunes"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.dunes">Dunes</strong><small data-i18n="theme.dunesDesc">Sahara + réseau or</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="nuit" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-nuit"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.nuit">Nuit</strong><small data-i18n="theme.nuitDesc">Étoiles + réseau indigo</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+    </div>
+</div>
+                <div class="lang-switcher" id="langSwitcher">
+                    <button class="lang-btn" id="langBtn">
+                        <span class="lang-flag">FR</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="lang-dropdown" id="langDropdown">
+                        <button class="lang-option active" data-lang="fr">
+                            <span class="lang-flag">FR</span>
+                            <span>Français</span>
+                        </button>
+                        <button class="lang-option" data-lang="en">
+                            <span class="lang-flag">EN</span>
+                            <span>English</span>
+                        </button>
+                        <button class="lang-option" data-lang="ar">
+                            <span class="lang-flag">AR</span>
+                            <span>العربية</span>
+                        </button>
+                    </div>
+                </div>                <div id="authLoggedOut"><a href="login.html" class="btn btn-outline btn-sm" data-i18n="nav.login">Se connecter</a></div>
+                <div id="authLoggedIn" style="display:none;"><a href="profile.html" class="btn btn-primary btn-sm">Mon profil</a></div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="jobs-page">
+        <div class="container">
+            <div class="jobs-header">
+                <h1><span data-i18n="jobs.pageTitle">Offres d'emploi</span> <span class="text-gradient">IT</span></h1>
+                <p data-i18n="jobs.pageSubtitle">Des centaines d'opportunités pour tous les informaticiens en Algérie</p>
+            </div>
+
+            <div class="jobs-filters">
+                <div class="filter-group">
+                    <label data-i18n="jobs.searchLabel">Recherche</label>
+                    <input type="text" placeholder="Poste, entreprise..." id="filterSearch" data-i18n-placeholder="jobs.searchPlaceholder">
+                </div>
+                <div class="filter-group">
+                    <label data-i18n="jobs.categoryLabel">Catégorie</label>
+                    <select id="filterCategory">
+                        <option value="" data-i18n="jobs.all">Toutes</option>
+                        <option value="Développement" data-i18n="jobs.catDev">Développement</option>
+                        <option value="Réseau" data-i18n="jobs.catNetwork">Réseau & Telecom</option>
+                        <option value="Cybersécurité" data-i18n="jobs.catSecurity">Cybersécurité</option>
+                        <option value="Système" data-i18n="jobs.catSys">Administration Système</option>
+                        <option value="Data" data-i18n="jobs.catData">Data Science & IA</option>
+                        <option value="Design" data-i18n="jobs.catDesign">UI/UX Design</option>
+                        <option value="Gestion" data-i18n="jobs.catProj">Gestion de Projet</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label data-i18n="jobs.typeLabel">Type</label>
+                    <select id="filterType">
+                        <option value="" data-i18n="jobs.all">Tous</option>
+                        <option value="remote" data-i18n="jobs.remote">Remote</option>
+                        <option value="hybrid" data-i18n="jobs.hybrid">Hybride</option>
+                        <option value="onsite" data-i18n="jobs.onsite">Sur site</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>&nbsp;</label>
+                    <button class="new-job-btn" id="newJobBtn" style="width:100%;justify-content:center;">
+                        <i class="fas fa-plus"></i> <span data-i18n="jobs.postOffer">Publier une offre</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="jobs-grid" id="jobsGrid">
+                <div class="loading" style="grid-column:1/-1;"><i class="fas fa-spinner fa-spin"></i> <span data-i18n="jobs.loading">Chargement des offres...</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Job Modal -->
+    <div class="modal-overlay" id="jobModal">
+        <div class="modal">
+            <button class="modal-close" id="closeJobModal"><i class="fas fa-times"></i></button>
+            <h2 data-i18n="jobs.modalTitle">Publier une offre d'emploi</h2>
+            <form id="jobForm">
+                <div class="form-group">
+                    <label data-i18n="jobs.titleLabel">Titre du poste *</label>
+                    <input type="text" id="jobTitle" placeholder="Ex: Ingénieur Réseau Senior" required data-i18n-placeholder="jobs.titlePlaceholder">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label data-i18n="jobs.companyLabel">Entreprise *</label>
+                        <input type="text" id="jobCompany" placeholder="Nom de l'entreprise" required data-i18n-placeholder="jobs.companyPlaceholder">
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="jobs.locationLabel">Lieu *</label>
+                        <input type="text" id="jobLocation" placeholder="Alger, Oran..." required data-i18n-placeholder="jobs.locationPlaceholder">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label data-i18n="jobs.typeLabel">Type</label>
+                        <select id="jobType">
+                            <option value="onsite" data-i18n="jobs.onsite">Sur site</option>
+                            <option value="hybrid" data-i18n="jobs.hybrid">Hybride</option>
+                            <option value="remote" data-i18n="jobs.remote">Remote</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="jobs.categoryLabel">Catégorie</label>
+                        <select id="jobCategory">
+                            <option value="Développement" data-i18n="jobs.catDev">Développement</option>
+                            <option value="Réseau" data-i18n="jobs.catNetwork">Réseau & Telecom</option>
+                            <option value="Cybersécurité" data-i18n="jobs.catSecurity">Cybersécurité</option>
+                            <option value="Système" data-i18n="jobs.catSys">Administration Système</option>
+                            <option value="Data" data-i18n="jobs.catData">Data Science & IA</option>
+                            <option value="Design" data-i18n="jobs.catDesign">UI/UX Design</option>
+                            <option value="Gestion" data-i18n="jobs.catProj">Gestion de Projet</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label data-i18n="jobs.salaryMinLabel">Salaire min (DA)</label>
+                        <input type="number" id="jobSalaryMin" placeholder="120000">
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="jobs.salaryMaxLabel">Salaire max (DA)</label>
+                        <input type="number" id="jobSalaryMax" placeholder="200000">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="jobs.descriptionLabel">Description *</label>
+                    <textarea id="jobDesc" placeholder="Décrivez le poste, les missions, l'entreprise..." required data-i18n-placeholder="jobs.descriptionPlaceholder"></textarea>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="jobs.skillsLabel">Compétences (séparées par des virgules)</label>
+                    <input type="text" id="jobSkills" placeholder="Cisco, BGP, Fortinet" data-i18n-placeholder="jobs.skillsPlaceholder">
+                </div>
+                <div class="form-group">
+                    <label data-i18n="jobs.emailLabel">Email de contact</label>
+                    <input type="email" id="jobEmail" placeholder="recrutement@entreprise.com" data-i18n-placeholder="jobs.emailPlaceholder">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" id="cancelJobModal"><span data-i18n="common.cancel">Annuler</span></button>
+                    <button type="submit" class="btn btn-primary" id="submitJobBtn"><i class="fas fa-briefcase"></i> <span data-i18n="jobs.publish">Publier</span></button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/auth.js?v=20260807"></script>
+    <script src="assets/js/db.js?v=20260807"></script>
+    <script src="assets/js/translations.js?v=20260807"></script>
+    <script src="assets/js/i18n.js?v=20260807"></script>
+    <script src="assets/js/script.js?v=20260807"></script>
+
+    <script src="assets/js/widgets.js?v=20260807"></script>
+    <script>
+        (async () => {
+            Auth.init();
+            let currentUser = null;
+            const { user } = await Auth.getUser();
+            if (user && !Auth.isEmailConfirmed(user)) {
+                await Auth.signOut('login.html');
+                return;
+            }
+            if (user) {
+                currentUser = user;
+                document.getElementById('authLoggedOut').style.display = 'none';
+                document.getElementById('authLoggedIn').style.display = 'flex';
+            }
+
+            const colors = ['', 'green', 'purple', 'amber'];
+
+            async function loadJobs() {
+                const category = document.getElementById('filterCategory').value;
+                const type = document.getElementById('filterType').value;
+                const search = document.getElementById('filterSearch').value;
+
+                const { data, error } = await DB.getJobOffers({ category, type });
+                console.log('Jobs result:', { data, error, count: data?.length });
+                const grid = document.getElementById('jobsGrid');
+
+                if (error) {
+                    console.error('Error loading jobs:', error);
+                    grid.innerHTML = `<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Erreur: ${error.message}</p></div>`;
+                    return;
+                }
+
+                let filtered = data || [];
+                if (search) {
+                    const q = search.toLowerCase();
+                    filtered = filtered.filter(j => j.title.toLowerCase().includes(q) || j.company.toLowerCase().includes(q));
+                }
+
+                if (filtered.length === 0) {
+                    grid.innerHTML = '<div class="empty-state"><i class="fas fa-briefcase"></i><p>' + t('jobs.empty') + '</p></div>';
+                    return;
+                }
+
+                grid.innerHTML = filtered.map((j, i) => `
+                    <div class="job-card-full">
+                        <div class="job-card-top">
+                            <div class="job-company-info">
+                                <div class="company-logo-lg ${colors[i % 4]}">${j.company[0]}</div>
+                                <div><strong>${j.company}</strong><span>${j.location}</span></div>
+                            </div>
+                            <span class="job-type-badge ${j.job_type}">${j.job_type === 'remote' ? t('jobs.remote') : j.job_type === 'hybrid' ? t('jobs.hybrid') : t('jobs.onsite')}</span>
+                        </div>
+                        <h3>${j.title}</h3>
+                        <p class="job-desc">${j.description}</p>
+                        <div class="job-tags">
+                            ${(j.requirements || []).slice(0, 4).map(r => `<span>${r}</span>`).join('')}
+                        </div>
+                        <div class="job-card-bottom">
+                            <span class="job-salary-lg">${j.salary_min ? j.salary_min.toLocaleString() + ' - ' + (j.salary_max || '').toLocaleString() + ' DA' : t('jobs.notSpecified')}</span>
+                            <span class="job-date-lg">${timeAgo(j.created_at)}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Filters
+            document.getElementById('filterCategory').addEventListener('change', loadJobs);
+            document.getElementById('filterType').addEventListener('change', loadJobs);
+            let st; document.getElementById('filterSearch').addEventListener('input', () => { clearTimeout(st); st = setTimeout(loadJobs, 300); });
+
+            // Modal
+            document.getElementById('newJobBtn').addEventListener('click', () => {
+                if (!currentUser) { window.location.href = 'login.html'; return; }
+                document.getElementById('jobModal').classList.add('open');
+            });
+            document.getElementById('closeJobModal').addEventListener('click', () => document.getElementById('jobModal').classList.remove('open'));
+            document.getElementById('cancelJobModal').addEventListener('click', () => document.getElementById('jobModal').classList.remove('open'));
+
+            document.getElementById('jobForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = document.getElementById('submitJobBtn');
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                btn.disabled = true;
+
+                const requirements = document.getElementById('jobSkills').value.split(',').map(s => s.trim()).filter(Boolean);
+
+                await DB.createJobOffer({
+                    title: document.getElementById('jobTitle').value.trim(),
+                    company: document.getElementById('jobCompany').value.trim(),
+                    location: document.getElementById('jobLocation').value.trim(),
+                    job_type: document.getElementById('jobType').value,
+                    category: document.getElementById('jobCategory').value,
+                    description: document.getElementById('jobDesc').value.trim(),
+                    requirements,
+                    salary_min: parseInt(document.getElementById('jobSalaryMin').value) || null,
+                    salary_max: parseInt(document.getElementById('jobSalaryMax').value) || null,
+                    contact_email: document.getElementById('jobEmail').value.trim(),
+                    author_id: currentUser.id,
+                    is_active: true
+                });
+
+                document.getElementById('jobModal').classList.remove('open');
+                document.getElementById('jobForm').reset();
+                btn.innerHTML = '<i class="fas fa-briefcase"></i> ' + t('jobs.publish');
+                btn.disabled = false;
+                loadJobs();
+            });
+
+            function timeAgo(date) {
+                const s = Math.floor((Date.now() - new Date(date)) / 1000);
+                if (s < 60) return t('common.justNow');
+                if (s < 3600) return t('common.ago') + ' ' + Math.floor(s/60) + t('common.min');
+                if (s < 86400) return t('common.ago') + ' ' + Math.floor(s/3600) + t('common.hr');
+                return t('common.ago') + ' ' + Math.floor(s/86400) + t('common.day');
+            }
+
+            await loadJobs();
+        })();
+    </script>
+<script src="assets/js/effects/themes.js" defer data-base=""></script>
+</body>
+</html>
+
+
