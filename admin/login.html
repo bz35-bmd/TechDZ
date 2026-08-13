@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-i18n="admin.loginTitle">Admin — TechDZ</title>
-    <link rel="icon" type="image/svg+xml" href="../logo.svg">
+    <link rel="icon" type="image/svg+xml" href="../assets/img/logo.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
 </head>
 <body class="login-page">
     <div class="theme-picker theme-picker-fixed">
@@ -48,7 +48,7 @@
 <div class="login-container">
         <div class="login-card">
             <div class="login-header">
-                <img src="../logo.svg" alt="TechDZ" height="32">
+                <img src="../assets/img/logo.svg" alt="TechDZ" height="32">
                 <h1 data-i18n="admin.loginHeading">Administration</h1>
                 <p data-i18n="admin.loginSub">Connectez-vous pour gérer la plateforme</p>
             </div>
@@ -80,34 +80,11 @@
 
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <script src="../config.js"></script>
-    <script src="../auth.js?v=20260807"></script>
-    <script src="translations.js?v=20260807"></script>
-    <script>
-        (function () {
-            const params = new URLSearchParams(window.location.search);
-            const lang = params.get('lang') || localStorage.getItem('techdz-lang') || 'fr';
-            localStorage.setItem('techdz-lang', lang);
-            window.__lang = lang;
-            const tr = window.translations;
-            const data = (tr && tr[lang]) || (tr && tr.fr) || {};
-            if (lang === 'ar') document.documentElement.setAttribute('dir', 'rtl');
-            document.documentElement.setAttribute('lang', lang);
-            const apply = (attr, set) => document.querySelectorAll('[' + attr + ']').forEach(el => {
-                const k = el.getAttribute(attr);
-                if (data[k]) set(el, data[k]);
-            });
-            apply('data-i18n', (el, v) => el.textContent = v);
-            apply('data-i18n-placeholder', (el, v) => el.placeholder = v);
-            apply('data-i18n-title', (el, v) => el.title = v);
-            apply('data-i18n-aria', (el, v) => el.setAttribute('aria-label', v));
-            window.t = function (key, fb) {
-                const v = data[key];
-                return (v !== undefined && v !== null && v !== '') ? v : (fb !== undefined ? fb : key);
-            };
-        })();
-    </script>
-    <script src="../db.js?v=20260807"></script>
+    <script src="../assets/js/config.js"></script>
+    <script src="../assets/js/auth.js?v=20260807"></script>
+    <script src="../assets/js/translations.js?v=20260807"></script>
+    <script src="../assets/js/i18n.js?v=20260807"></script>
+    <script src="../assets/js/db.js?v=20260807"></script>
     <script>
         Auth.init();
 
@@ -236,6 +213,6 @@
             window.location.href = 'index.html';
         });
     </script>
-<script src="../assets/themes.js" defer data-base="../"></script>
+<script src="../assets/js/effects/themes.js" defer data-base="../"></script>
 </body>
 </html>
