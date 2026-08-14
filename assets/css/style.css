@@ -408,10 +408,10 @@ input {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 30px;
-  border-radius: 6px;
-  font-size: 0.85rem;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  font-size: 0.68rem;
   font-weight: 700;
   color: #fff;
   background: var(--primary);
@@ -3145,3 +3145,298 @@ body.hero-anim-ready .nav-actions {
   margin: 0 auto;
   max-width: 100%;
 }
+
+/* ==========================================
+   Modale vidéo de présentation (bouton "Découvrir")
+   ========================================== */
+.video-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-fast), visibility var(--transition-fast);
+}
+
+.video-modal.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.video-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.85);
+  backdrop-filter: blur(4px);
+}
+
+.video-modal-card {
+  position: relative;
+  width: min(960px, 100%);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+  transform: translateY(16px);
+  transition: transform var(--transition-fast);
+}
+
+.video-modal.open .video-modal-card {
+  transform: translateY(0);
+}
+
+.video-modal-close {
+  position: absolute;
+  top: -18px;
+  right: -18px;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  z-index: 1;
+}
+
+.video-modal-close:hover {
+  background: var(--primary);
+  color: #fff;
+  transform: rotate(90deg);
+}
+
+.video-modal-frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: #000;
+}
+
+.video-modal-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+@media (max-width: 640px) {
+  .video-modal { padding: 12px; }
+  .video-modal-close { top: -14px; right: -14px; width: 32px; height: 32px; }
+}
+
+/* ==========================================
+   Recherche animée (icône loupe → champ premium)
+   ========================================== */
+.search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-btn {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.search-btn:hover {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--primary);
+  border-color: rgba(59, 130, 246, 0.25);
+  transform: translateY(-1px) scale(1.06);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+.search-btn:active { transform: scale(0.92); }
+
+/* Onde d'expansion au clic */
+.search-btn.ping::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+  animation: search-ping 0.65s ease-out 1;
+  pointer-events: none;
+}
+
+@keyframes search-ping {
+  to { box-shadow: 0 0 0 18px rgba(59, 130, 246, 0); }
+}
+
+.search-field {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%) scaleX(0.7);
+  transform-origin: left center;
+  width: 40px;
+  height: 42px;
+  opacity: 0;
+  visibility: hidden;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 20;
+  filter: blur(3px);
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.25s ease,
+              filter 0.3s ease,
+              visibility 0.4s;
+}
+
+.search-field.open {
+  width: 260px;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(-50%) scaleX(1);
+  filter: blur(0);
+}
+
+.search-field > i {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  pointer-events: none;
+  transition: color 0.2s ease;
+}
+
+.search-field.open > i { color: var(--primary); }
+
+.search-field input {
+  width: 100%;
+  height: 40px;
+  padding: 0 16px 0 40px;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-full);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  outline: none;
+  box-shadow: 0 10px 30px rgba(2, 6, 23, 0.16);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.search-field input::placeholder { color: var(--text-muted); }
+
+.search-field input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.18), 0 10px 30px rgba(2, 6, 23, 0.16);
+}
+
+/* RTL : inversion du déploiement */
+[dir="rtl"] .search-field { left: auto; right: 0; transform-origin: right center; }
+[dir="rtl"] .search-field input { padding: 0 40px 0 16px; }
+[dir="rtl"] .search-field > i { left: auto; right: 14px; }
+
+/* ==========================================
+   En-tête de page + barre de filtres (style Jobs)
+   Classes partagées : forum → networking
+   ========================================== */
+.page-header { text-align: center; max-width: 640px; margin: 0 auto 48px; }
+.page-header h1 { font-size: 2.25rem; font-weight: 800; margin-bottom: 12px; }
+.page-header p { color: var(--text-secondary); font-size: 1.05rem; }
+
+.page-filters {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  margin-bottom: 32px;
+  padding: 20px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+}
+
+.filter-group { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 160px; }
+.filter-group label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.filter-group select,
+.filter-group > input {
+  padding: 10px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  appearance: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+.filter-group select:focus,
+.filter-group > input:focus { border-color: var(--primary); outline: none; }
+
+.filter-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 24px;
+  background: var(--gradient-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.filter-cta:hover { transform: translateY(-2px); box-shadow: 0 4px 15px var(--primary-glow); }
+
+@media (max-width: 768px) {
+  .page-filters { flex-direction: column; }
+  .filter-group { flex: 1 1 100%; min-width: 0; }
+}
+
+/* Icône loupe premium de la navbar (accueil + pages forum → networking) */
+.nav-search-icon {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nav-search-icon:hover {
+  color: #fff;
+  background: var(--gradient-primary);
+  border-color: var(--primary);
+  transform: translateY(-2px) scale(1.1);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.18), 0 12px 26px var(--primary-glow);
+}
+
+.nav-search-icon:active { transform: scale(0.9); }
