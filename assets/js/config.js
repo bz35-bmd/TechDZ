@@ -19,11 +19,32 @@ const TURNSTILE_SITE_KEY = '0x4AAAAAAEGDgLfygIgeZ-OB';
 window.TURNSTILE_SITE_KEY = TURNSTILE_SITE_KEY;
 
 // ============================================
+// TechDZ — Assistant IA (OpenCode Zen)
+// L'appel passe par l'Edge Function Supabase 'ai-assistant' qui détient
+// la clé API côté serveur. La clé n'est JAMAIS définie dans ce fichier.
+// enabled=false → retomber sur les réponses locales (base par mots-clés).
+// ============================================
+const AI_ASSISTANT = {
+  enabled: true,
+  functionName: 'ai-assistant'
+};
+window.AI_ASSISTANT = AI_ASSISTANT;
+
+// ============================================
 // URL de base de l'application (GitHub Pages avec sous-dossier ou local)
 // Ex: https://user.github.io/TechDZ-master/ ou file:///.../TechDZ-master/
 // ============================================
 const APP_URL = window.location.origin + window.location.pathname.split('/').slice(0, -1).join('/') + '/';
 window.APP_URL = APP_URL;
+
+// ============================================
+// TechDZ — Vidéo de présentation (2 à 5 min)
+// Hébergée sur YouTube (méthode pro : streaming CDN + stats),
+// intégrée en iframe avec autoplay dans la modale du bouton "Découvrir".
+// Remplacer VIDEO_ID par l'ID de la vidéo YouTube (après watch?v= ou youtu.be/).
+// ============================================
+const VIDEO_ID = 'uFiSMjs9sZY'; // Ex: 'dQw4w9WgXcQ' — laisser vide pour désactiver la modale
+window.VIDEO_ID = VIDEO_ID;
 
 // ============================================
 // CONFIGURATION DU DASHBOARD SUPABASE (à faire une fois) :

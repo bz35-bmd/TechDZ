@@ -14,6 +14,11 @@
   function t(key, fallback) { return T[key] || fallback; }
   function page(url) { return url + '?lang=' + lang; }
 
+  var AI_ENABLED = !(window.AI_ASSISTANT) || window.AI_ASSISTANT.enabled !== false;
+  var AI_FN = (window.AI_ASSISTANT && window.AI_ASSISTANT.functionName) || 'ai-assistant';
+  var chatHistory = [];
+  var MAX_HISTORY = 6;
+
   // ==========================================
   // Knowledge base (per language)
   // ==========================================
@@ -207,19 +212,84 @@
     if (e.key === 'Escape') closePanel();
   });
 
+  function askAI(message, lang) {
+    return new Promise(function (resolve, reject) {
+      if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+        return reject(new Error('offline'));
+      }
+      var base = (window.SUPABASE_URL || '').replace(/\/+$/, '');
+      if (!base) return reject(new Error('no supabase url'));
+      var url = base + '/functions/v1/' + AI_FN;
+      var history = chatHistory.slice(-MAX_HISTORY);
+
+      function isRetryable(err) {
+        return !!(err && (err.retryable || err instanceof TypeError || err.name === 'AbortError'));
+      }
+
+      function attempt(triesLeft) {
+        var ctrl = new AbortController();
+        var timer = setTimeout(function () { ctrl.abort(); }, 25000);
+        fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + (window.SUPABASE_ANON_KEY || '')
+          },
+          body: JSON.stringify({ message: message, lang: lang, history: history }),
+          signal: ctrl.signal
+        }).then(function (res) {
+          clearTimeout(timer);
+          if (res.status === 429 || res.status >= 500) throw { retryable: true };
+          if (!res.ok) throw new Error('http ' + res.status);
+          return res.json();
+        }).then(function (data) {
+          if (!data || typeof data.reply !== 'string' || !data.reply.trim()) throw new Error('no reply');
+          resolve(data.reply.trim());
+        }).catch(function (err) {
+          clearTimeout(timer);
+          if (triesLeft > 0 && isRetryable(err)) {
+            setTimeout(function () { attempt(triesLeft - 1); }, 700);
+            return;
+          }
+          reject(err);
+        });
+      }
+
+      attempt(1);
+    });
+  }
+
   function botReply(message) {
+    if (typing) return;
     typing = true;
     var tEl = document.createElement('div');
     tEl.className = 'ai-typing';
     tEl.innerHTML = '<span></span><span></span><span></span>';
     aiMessages.appendChild(tEl);
     scrollMessages();
-    var delay = Math.min(600 + message.length * 15, 1300);
-    setTimeout(function () {
+
+    function finish(text, safe) {
       tEl.remove();
       typing = false;
-      addMessage(findReply(message), 'bot');
-    }, delay);
+      chatHistory.push({ role: 'assistant', content: safe ? text : stripHtml(text) });
+      if (chatHistory.length > MAX_HISTORY * 2) {
+        chatHistory.splice(0, chatHistory.length - MAX_HISTORY * 2);
+      }
+      addMessage(safe ? escapeHtml(text).replace(/\n/g, '<br>') : text, 'bot');
+    }
+
+    chatHistory.push({ role: 'user', content: message });
+
+    if (!AI_ENABLED) {
+      setTimeout(function () { finish(findReply(message), false); }, Math.min(600 + message.length * 15, 1300));
+      return;
+    }
+
+    askAI(message, lang).then(function (reply) {
+      finish(reply, true);
+    }).catch(function () {
+      finish(findReply(message), false);
+    });
   }
 
   function sendMessage(text) {
@@ -232,6 +302,12 @@
 
   function escapeHtml(str) {
     return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function stripHtml(str) {
+    var d = document.createElement('div');
+    d.innerHTML = str;
+    return (d.textContent || d.innerText || '').trim();
   }
 
   aiSend.addEventListener('click', function () { sendMessage(); });

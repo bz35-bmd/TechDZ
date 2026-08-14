@@ -257,6 +257,7 @@ const Online = {
         }, payload => {
           const rec = payload.new || {};
           if (!rec.last_active || !rec.full_name) return;
+          if (rec.role === 'admin' || rec.role === 'moderator') return;
           if (self.myId && rec.id === self.myId) return;
           const fresh = (Date.now() - new Date(rec.last_active).getTime()) < 5 * 60 * 1000;
           if (!fresh) return;
@@ -415,6 +416,56 @@ document.addEventListener('DOMContentLoaded', () => {
     if (mobileOverlay) mobileOverlay.addEventListener('click', closeMobileNav);
     document.querySelectorAll('.mobile-link').forEach(link => link.addEventListener('click', closeMobileNav));
   }
+
+  // ==========================================
+  // Modale vidéo de présentation ("Découvrir" → défilement + vidéo autoplay)
+  // ==========================================
+  const videoModal = document.getElementById('videoModal');
+  const videoFrame = document.getElementById('videoFrame');
+  const discoverBtn = document.getElementById('discoverBtn');
+  if (videoModal && videoFrame && discoverBtn && window.VIDEO_ID) {
+    const openVideo = () => {
+      videoFrame.src = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(window.VIDEO_ID) + '?autoplay=1&rel=0&modestbranding=1&playsinline=1';
+      videoModal.classList.add('open');
+      videoModal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    };
+    const closeVideo = () => {
+      videoFrame.src = '';
+      videoModal.classList.remove('open');
+      videoModal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    };
+    discoverBtn.addEventListener('click', openVideo);
+    videoModal.querySelectorAll('[data-video-close]').forEach(el => el.addEventListener('click', closeVideo));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && videoModal.classList.contains('open')) closeVideo(); });
+  }
+
+  // ==========================================
+  // Recherche animée (icône loupe → champ premium)
+  // Câblage de tous les .search-wrap présents dans le DOM
+  // (barres de recherche locales des pages : forum → events).
+  // La navbar n'injecte plus de loupe : chaque page gère son accès.
+  // ==========================================
+  document.querySelectorAll('.search-wrap').forEach(wrap => {
+    const btn = wrap.querySelector('.search-btn');
+    const field = wrap.querySelector('.search-field');
+    const input = field ? field.querySelector('input') : null;
+    if (!btn || !field || !input) return;
+    const open = () => {
+      field.classList.add('open');
+      btn.classList.add('ping');
+      setTimeout(() => btn.classList.remove('ping'), 600);
+      setTimeout(() => input.focus(), 120);
+    };
+    const close = () => field.classList.remove('open');
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      field.classList.contains('open') ? close() : open();
+    });
+    document.addEventListener('click', e => { if (!wrap.contains(e.target)) close(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+  });
 
   // ==========================================
   // AUTH STATE MANAGEMENT

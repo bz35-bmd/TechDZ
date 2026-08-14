@@ -348,6 +348,7 @@ const DB = {
     let query = client
       .from('profiles')
       .select('*', { count: 'exact' })
+      .not('role', 'in', '("admin","moderator")')
       .order('created_at', { ascending: false })
       .range((page - 1) * limit, page * limit - 1);
 
@@ -584,7 +585,7 @@ const DB = {
     return { data, error };
   },
 
-  // Utilisateurs en ligne (last_active < 5 minutes), pour le widget public
+  // Utilisateurs en ligne (last_active < 5 minutes), pour le widget public (membres uniquement)
   async getOnlineUsers(limit = 20) {
     const client = this.getClient();
     const cutoff = new Date(Date.now() - 5 * 60 * 1000).toISOString();
@@ -592,12 +593,13 @@ const DB = {
       .from('profiles')
       .select('id, full_name, avatar_url, job_title, city, role, last_active')
       .gt('last_active', cutoff)
+      .not('role', 'in', '("admin","moderator")')
       .order('last_active', { ascending: false })
       .limit(limit);
     return { data, error };
   },
 
-  // Nombre d'utilisateurs en ligne
+  // Nombre d'utilisateurs en ligne (membres uniquement)
   async getOnlineCount() {
     const client = this.getClient();
     const cutoff = new Date(Date.now() - 5 * 60 * 1000).toISOString();
@@ -605,7 +607,8 @@ const DB = {
       const { count, error } = await client
         .from('profiles')
         .select('id', { count: 'exact', head: true })
-        .gt('last_active', cutoff);
+        .gt('last_active', cutoff)
+        .not('role', 'in', '("admin","moderator")');
       return { count: count || 0, error };
     } catch (e) {
       return { count: 0, error: { message: e.message } };
