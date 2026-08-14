@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="title.search">Recherche — TechDZ</title>
+    <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .search-page { padding: 100px 0 80px; min-height: 100vh; }
+        .search-header { text-align: center; max-width: 720px; margin: 0 auto 40px; }
+        .search-header h1 { font-size: 2rem; font-weight: 800; margin-bottom: 8px; }
+        .search-header p { color: var(--text-secondary); font-size: 1rem; }
+
+        .search-big {
+            position: relative;
+            margin-top: 28px;
+            max-width: 560px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .search-big i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            pointer-events: none;
+        }
+        .search-big input {
+            width: 100%;
+            height: 56px;
+            padding: 0 52px 0 52px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-full);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 1rem;
+            outline: none;
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+        }
+        .search-big input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.16), 0 12px 32px rgba(2, 6, 23, 0.1);
+        }
+        .search-big .clear-btn {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30px;
+            height: 30px;
+            border: none;
+            border-radius: 50%;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            transition: all var(--transition-fast);
+        }
+        .search-big .clear-btn:hover { background: rgba(59, 130, 246, 0.12); color: var(--primary); }
+        .search-big.has-value .clear-btn { display: inline-flex; }
+        [dir="rtl"] .search-big i { left: auto; right: 20px; }
+        [dir="rtl"] .search-big input { padding: 0 52px 0 52px; }
+        [dir="rtl"] .search-big .clear-btn { right: auto; left: 14px; }
+
+        .search-info { text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 24px; min-height: 22px; }
+
+        .search-results { display: flex; flex-direction: column; gap: 28px; }
+        .search-section { animation: fadeUp 0.4s ease both; }
+        .search-section-title {
+            display: flex; align-items: center; gap: 10px;
+            font-size: 1.05rem; font-weight: 700; margin-bottom: 12px;
+        }
+        .search-section-title i { color: var(--primary); font-size: 0.95rem; }
+        .search-section-title .count {
+            font-size: 0.75rem; font-weight: 600; color: var(--text-muted);
+            background: var(--bg-secondary); border: 1px solid var(--border-color);
+            padding: 2px 10px; border-radius: var(--radius-full);
+        }
+        .search-item {
+            display: block; padding: 16px 20px; margin-bottom: 8px;
+            background: var(--bg-secondary); border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            transition: all var(--transition-fast); text-decoration: none; color: inherit;
+        }
+        .search-item:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(2, 6, 23, 0.1); }
+        .search-item h4 { font-size: 0.98rem; font-weight: 700; margin-bottom: 4px; color: var(--text-primary); }
+        .search-item .meta { font-size: 0.8rem; color: var(--text-muted); display: flex; gap: 10px; flex-wrap: wrap; }
+        .search-item .snippet { font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+        .search-empty { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+        .search-empty i { font-size: 3rem; opacity: 0.3; margin-bottom: 14px; display: block; }
+
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <nav class="navbar scrolled">
+        <div class="container nav-container">
+            <a href="index.html" class="nav-logo"><img src="assets/img/logo.svg" alt="TechDZ" height="32"></a>
+            <div class="nav-links">
+                <a href="index.html#features" class="nav-link" data-i18n="nav.features">Fonctionnalités</a>
+                <a href="forum.html" class="nav-link" data-i18n="nav.forum">Forum</a>
+                <a href="jobs.html" class="nav-link" data-i18n="nav.jobs">Emplois</a>
+                <a href="training.html" class="nav-link" data-i18n="nav.training">Formations</a>
+                <a href="news.html" class="nav-link" data-i18n="nav.news">Actualités</a>
+                <a href="events.html" class="nav-link" data-i18n="nav.events">Événements</a>
+                <a href="networking.html" class="nav-link" data-i18n="nav.networking">Réseautage</a>
+                <a href="search.html" class="nav-link" style="color:var(--primary)" data-i18n="nav.search">Recherche</a>
+            </div>
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+<div class="theme-picker">
+    <button class="theme-picker-btn" id="themePickerBtn" aria-label="Choisir le thème" data-i18n-aria="theme.choose" aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-palette"></i>
+    </button>
+    <div class="theme-picker-menu" id="themePickerMenu" role="menu">
+        <div class="theme-picker-header" data-i18n="theme.title">Thème du site</div>
+        <button class="theme-option" data-theme-option="code" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-code"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.code">Code</strong><small data-i18n="theme.codeDesc">Encre liquide + &lt;/&gt;</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="signal" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-signal"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.signal">Signal</strong><small data-i18n="theme.signalDesc">Réseau + nœud</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="fusion" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-fusion"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.fusion">Fusion</strong><small data-i18n="theme.fusionDesc">Encre + nœud</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="dunes" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-dunes"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.dunes">Dunes</strong><small data-i18n="theme.dunesDesc">Sahara + réseau or</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+        <button class="theme-option" data-theme-option="nuit" role="menuitemradio" aria-checked="false">
+            <span class="theme-swatch swatch-nuit"></span>
+            <span class="theme-option-text"><strong data-i18n="theme.nuit">Nuit</strong><small data-i18n="theme.nuitDesc">Étoiles + réseau indigo</small></span>
+            <i class="fas fa-check theme-check"></i>
+        </button>
+    </div>
+</div>
+                <div class="lang-switcher" id="langSwitcher">
+                    <button class="lang-btn" id="langBtn">
+                        <span class="lang-flag">FR</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="lang-dropdown" id="langDropdown">
+                        <button class="lang-option active" data-lang="fr">
+                            <span class="lang-flag">FR</span>
+                            <span>Français</span>
+                        </button>
+                        <button class="lang-option" data-lang="en">
+                            <span class="lang-flag">EN</span>
+                            <span>English</span>
+                        </button>
+                        <button class="lang-option" data-lang="ar">
+                            <span class="lang-flag">AR</span>
+                            <span>العربية</span>
+                        </button>
+                    </div>
+                </div>                <div id="authLoggedOut"><a href="login.html" class="btn btn-outline btn-sm" data-i18n="nav.login">Se connecter</a></div>
+                <div id="authLoggedIn" style="display:none;"><a href="profile.html" class="btn btn-primary btn-sm">Mon profil</a></div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="search-page">
+        <div class="container">
+            <div class="search-header">
+                <h1><span data-i18n="search.title">Recherche</span> <span class="text-gradient">TechDZ</span></h1>
+                <p data-i18n="search.subtitle">Recherchez dans toute la communauté : forum, emplois, formations, événements, actualités et membres</p>
+            </div>
+
+            <div class="search-big" id="searchBig">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchPageInput" data-i18n-placeholder="search.placeholder" placeholder="Rechercher sur TechDZ...">
+                <button class="clear-btn" id="searchClear" aria-label="Effacer"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="search-info" id="searchInfo"></div>
+            <div id="searchResults" class="search-results"></div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/auth.js?v=20260807"></script>
+    <script src="assets/js/db.js?v=20260807"></script>
+    <script src="assets/js/translations.js?v=20260807"></script>
+    <script src="assets/js/i18n.js?v=20260807"></script>
+    <script src="assets/js/script.js?v=20260807"></script>
+    <script>
+    (() => {
+        const input = document.getElementById('searchPageInput');
+        const big = document.getElementById('searchBig');
+        const clearBtn = document.getElementById('searchClear');
+        const resultsEl = document.getElementById('searchResults');
+        const infoEl = document.getElementById('searchInfo');
+
+        const params = new URLSearchParams(window.location.search);
+        const initialQ = params.get('q') || '';
+        input.value = initialQ;
+        big.classList.toggle('has-value', !!initialQ);
+
+        const lower = s => String(s == null ? '' : s).toLowerCase();
+        const matches = (obj, keys, kw) => keys.some(k => lower(obj[k]).includes(kw));
+
+        function esc(s) {
+            return String(s == null ? '' : s)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        function section(title, icon, count, itemsHtml) {
+            return `<div class="search-section">
+                <div class="search-section-title"><i class="fas ${icon}"></i> ${title} <span class="count">${count}</span></div>
+                ${itemsHtml}
+            </div>`;
+        }
+
+        function item(href, title, meta, snippet) {
+            return `<a class="search-item" href="${href}">
+                <h4>${title}</h4>
+                ${meta ? `<div class="meta">${meta}</div>` : ''}
+                ${snippet ? `<div class="snippet">${snippet}</div>` : ''}
+            </a>`;
+        }
+
+        const L = window.__lang || localStorage.getItem('techdz-lang') || 'fr';
+        const langSuffix = '?lang=' + L;
+        const link = page => page + langSuffix;
+
+        async function doSearch(q) {
+            const kw = lower(q.trim());
+            if (!kw) {
+                resultsEl.innerHTML = `<div class="search-empty"><i class="fas fa-search"></i><p data-i18n="search.typeHint">Tapez pour rechercher dans tout TechDZ</p></div>`;
+                infoEl.textContent = '';
+                return;
+            }
+
+            resultsEl.innerHTML = `<div class="search-empty"><i class="fas fa-spinner fa-spin"></i><p data-i18n="search.loading">Recherche en cours...</p></div>`;
+            infoEl.textContent = '';
+
+            const safe = (p) => p.then(r => r).catch(() => ({ data: [], count: 0 }));
+            const [posts, jobs, courses, events, news, members] = await Promise.all([
+                safe(DB.getForumPosts({ limit: 25 })),
+                safe(DB.getJobOffers({ limit: 25 })),
+                safe(DB.getTrainingCourses({ limit: 25 })),
+                safe(DB.getEvents({ limit: 25 })),
+                safe(DB.getNews({ limit: 25 })),
+                safe(DB.getMembers({ limit: 25 }))
+            ]);
+
+            const rPosts   = (posts.data   || []).filter(p => matches(p, ['title', 'content'], kw));
+            const rJobs    = (jobs.data    || []).filter(j => matches(j, ['title', 'company', 'description', 'location'], kw));
+            const rCourses = (courses.data || []).filter(c => matches(c, ['title', 'description'], kw));
+            const rEvents  = (events.data  || []).filter(e => matches(e, ['title', 'description', 'location'], kw));
+            const rNews    = (news.data    || []).filter(n => matches(n, ['title', 'content'], kw));
+            const rMembers = (members.data || []).filter(m => matches(m, ['full_name', 'job_title', 'city'], kw) || (m.skills || []).some(s => lower(s).includes(kw)));
+
+            const total = rPosts.length + rJobs.length + rCourses.length + rEvents.length + rNews.length + rMembers.length;
+            infoEl.textContent = total > 0
+                ? `${total} ${t('search.results', 'résultat(s)')} · « ${q.trim()} »`
+                : `${t('search.noResults', 'Aucun résultat pour')} « ${q.trim()} »`;
+
+            if (total === 0) {
+                resultsEl.innerHTML = `<div class="search-empty"><i class="fas fa-search"></i><p>${t('search.noResultsHint', 'Essayez d\'autres mots-clés ou consultez les sections du site.')}</p></div>`;
+                return;
+            }
+
+            let html = '';
+            if (rPosts.length) html += section(t('search.forum', 'Forum'), 'fa-comments', rPosts.length,
+                rPosts.slice(0, 5).map(p => item(link('forum.html'),
+                    esc(p.title), esc(p.category?.name || ''), esc(p.content))).join(''));
+            if (rJobs.length) html += section(t('search.jobs', 'Emplois'), 'fa-briefcase', rJobs.length,
+                rJobs.slice(0, 5).map(j => item(link('jobs.html'),
+                    esc(j.title), esc(j.company) + (j.location ? ' • ' + esc(j.location) : ''), esc(j.description))).join(''));
+            if (rCourses.length) html += section(t('search.training', 'Formations'), 'fa-graduation-cap', rCourses.length,
+                rCourses.slice(0, 5).map(c => item(link('training.html'),
+                    esc(c.title), esc(c.level || '') + (c.category ? ' • ' + esc(c.category) : ''), esc(c.description))).join(''));
+            if (rEvents.length) html += section(t('search.events', 'Événements'), 'fa-calendar-alt', rEvents.length,
+                rEvents.slice(0, 5).map(e => item(link('events.html'),
+                    esc(e.title), esc(e.location || ''), esc(e.description))).join(''));
+            if (rNews.length) html += section(t('search.news', 'Actualités'), 'fa-newspaper', rNews.length,
+                rNews.slice(0, 5).map(n => item(link('news.html'),
+                    esc(n.title), esc(n.category || ''), esc(n.content))).join(''));
+            if (rMembers.length) html += section(t('search.members', 'Membres'), 'fa-users', rMembers.length,
+                rMembers.slice(0, 5).map(m => item(link('networking.html'),
+                    esc(m.full_name), esc(m.job_title || '') + (m.city ? ' • ' + esc(m.city) : ''), (m.skills || []).join(' • '))).join(''));
+
+            resultsEl.innerHTML = html;
+        }
+
+        let timer;
+        input.addEventListener('input', () => {
+            big.classList.toggle('has-value', !!input.value.trim());
+            clearTimeout(timer);
+            timer = setTimeout(() => doSearch(input.value), 350);
+        });
+        clearBtn.addEventListener('click', () => { input.value = ''; big.classList.remove('has-value'); doSearch(''); input.focus(); });
+
+        if (initialQ) doSearch(initialQ);
+    })();
+    </script>
+    <script src="assets/js/effects/themes.js" defer data-base=""></script>
+</body>
+</html>

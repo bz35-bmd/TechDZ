@@ -56,32 +56,6 @@
 
         /* Main */
         .forum-main { min-width: 0; }
-        .forum-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 24px;
-        }
-        .forum-header h1 { font-size: 1.75rem; font-weight: 800; }
-        .forum-search {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 16px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            width: 300px;
-        }
-        .forum-search input {
-            background: transparent;
-            color: var(--text-primary);
-            font-size: 0.9rem;
-            width: 100%;
-            outline: none;
-        }
-        .forum-search input::placeholder { color: var(--text-muted); }
-        .forum-search:focus-within { border-color: var(--primary); }
 
         /* Post List */
         .post-list { display: flex; flex-direction: column; gap: 12px; }
@@ -149,21 +123,6 @@
         }
         .solved-badge { color: var(--secondary); font-weight: 600; }
         .pinned-badge { color: var(--amber); font-weight: 600; }
-
-        /* New Post Button */
-        .new-post-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px 24px;
-            background: var(--gradient-primary);
-            color: #fff;
-            border-radius: var(--radius-md);
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-        }
-        .new-post-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px var(--primary-glow); }
 
         /* Modal */
         .modal-overlay {
@@ -282,8 +241,6 @@
         @media (max-width: 768px) {
             .forum-layout { grid-template-columns: 1fr; }
             .forum-sidebar { display: none; }
-            .forum-header { flex-direction: column; gap: 12px; align-items: stretch; }
-            .forum-search { width: 100%; }
         }
     </style>
 </head>
@@ -357,6 +314,7 @@
                         </button>
                     </div>
                 </div>                <div id="authLoggedOut"><a href="login.html" class="btn btn-outline btn-sm" data-i18n="nav.login">Se connecter</a></div>
+                <a href="search.html" class="nav-search-icon" aria-label="Recherche" title="Recherche" data-i18n-aria="nav.search"><i class="fas fa-search"></i></a>
                 <div id="authLoggedIn" style="display:none;"><a href="profile.html" class="btn btn-primary btn-sm">Mon profil</a></div>
             </div>
         </div>
@@ -364,6 +322,30 @@
 
     <div class="forum-page">
         <div class="container">
+            <div class="page-header" id="forumPageHeader">
+                <h1 data-i18n="forum.heading">Forum</h1>
+                <p data-i18n="forum.subtitle">Discutez, partagez, résolvez ensemble — posez vos questions techniques et entraidez-vous.</p>
+            </div>
+
+            <div class="page-filters" id="forumFilters">
+                <div class="filter-group">
+                    <label data-i18n="jobs.searchLabel">Recherche</label>
+                    <input type="text" id="searchInput" placeholder="Rechercher..." data-i18n-placeholder="forum.searchPlaceholder">
+                </div>
+                <div class="filter-group">
+                    <label data-i18n="jobs.categoryLabel">Catégorie</label>
+                    <select id="filterCategory">
+                        <option value="" data-i18n="forum.allPosts">Tous les posts</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>&nbsp;</label>
+                    <button class="filter-cta" id="newPostBtn">
+                        <i class="fas fa-plus"></i> <span data-i18n="forum.newPost">Nouveau post</span>
+                    </button>
+                </div>
+            </div>
+
             <div class="forum-layout">
                 <!-- Sidebar -->
                 <aside class="forum-sidebar">
@@ -388,18 +370,6 @@
                 <div class="forum-main">
                     <!-- LIST VIEW -->
                     <div class="post-list-view" id="listView">
-                        <div class="forum-header">
-                            <h1 data-i18n="forum.heading">Forum</h1>
-                            <div style="display:flex;gap:12px;align-items:center;">
-                                <div class="forum-search">
-                                    <i class="fas fa-search" style="color:var(--text-muted)"></i>
-                                    <input type="text" placeholder="Rechercher..." id="searchInput" data-i18n-placeholder="forum.searchPlaceholder">
-                                </div>
-                                <button class="new-post-btn" id="newPostBtn">
-                                    <i class="fas fa-plus"></i> <span data-i18n="forum.newPost">Nouveau post</span>
-                                </button>
-                            </div>
-                        </div>
                         <div class="post-list" id="postList">
                             <div class="loading"><i class="fas fa-spinner fa-spin"></i> <span data-i18n="forum.loading">Chargement...</span></div>
                         </div>
@@ -487,9 +457,24 @@
             const { data: categories } = await DB.getForumCategories();
             const catList = document.getElementById('categoryList');
             const postCategory = document.getElementById('postCategory');
+            const filterCategory = document.getElementById('filterCategory');
 
-            if (categories) {
-                categories.forEach(cat => {
+            // Fallback : si la table est vide/non renseignée, on affiche
+            // les catégories par défaut (identiques au seed SQL fourni).
+            const DEFAULT_CATEGORIES = [
+                { id: 1, name: 'Réseaux & Telecom', slug: 'network', color: '#3B82F6', icon: 'fa-network-wired', post_count: 0 },
+                { id: 2, name: 'Développement', slug: 'dev', color: '#8B5CF6', icon: 'fa-code', post_count: 0 },
+                { id: 3, name: 'Cybersécurité', slug: 'security', color: '#EF4444', icon: 'fa-shield-halved', post_count: 0 },
+                { id: 4, name: 'Administration Système', slug: 'sys', color: '#10B981', icon: 'fa-server', post_count: 0 },
+                { id: 5, name: 'Data & IA', slug: 'data', color: '#14B8A6', icon: 'fa-brain', post_count: 0 },
+                { id: 6, name: 'UI/UX Design', slug: 'design', color: '#F59E0B', icon: 'fa-palette', post_count: 0 },
+                { id: 7, name: 'Gestion de Projet', slug: 'project', color: '#F97316', icon: 'fa-tasks', post_count: 0 },
+                { id: 8, name: 'Annonces & Divers', slug: 'general', color: '#64748B', icon: 'fa-comments', post_count: 0 }
+            ];
+            const cats = categories && categories.length ? categories : DEFAULT_CATEGORIES;
+
+            if (cats) {
+                cats.forEach(cat => {
                     const link = document.createElement('a');
                     link.href = '#';
                     link.className = 'category-link';
@@ -498,6 +483,7 @@
                     link.addEventListener('click', (e) => {
                         e.preventDefault();
                         currentCategory = cat.id;
+                        filterCategory.value = cat.id;
                         document.querySelectorAll('.category-link').forEach(l => l.classList.remove('active'));
                         link.classList.add('active');
                         loadPosts();
@@ -508,6 +494,11 @@
                     opt.value = cat.id;
                     opt.textContent = cat.name;
                     postCategory.appendChild(opt);
+
+                    const barOpt = document.createElement('option');
+                    barOpt.value = cat.id;
+                    barOpt.textContent = cat.name;
+                    filterCategory.appendChild(barOpt);
                 });
             }
 
@@ -515,8 +506,21 @@
             catList.querySelector('[data-cat="all"]').addEventListener('click', (e) => {
                 e.preventDefault();
                 currentCategory = null;
+                filterCategory.value = '';
                 document.querySelectorAll('.category-link').forEach(l => l.classList.remove('active'));
                 e.currentTarget.classList.add('active');
+                loadPosts();
+            });
+
+            // Barre de filtres : sélection Catégorie (synchronisée avec la sidebar)
+            filterCategory.addEventListener('change', () => {
+                currentCategory = filterCategory.value ? parseInt(filterCategory.value) : null;
+                document.querySelectorAll('.category-link').forEach(l => l.classList.remove('active'));
+                if (currentCategory) {
+                    document.querySelector(`.category-link[data-cat="${currentCategory}"]`)?.classList.add('active');
+                } else {
+                    catList.querySelector('[data-cat="all"]')?.classList.add('active');
+                }
                 loadPosts();
             });
 
@@ -577,6 +581,8 @@
                 window._currentPostId = postId;
                 document.getElementById('listView').classList.add('hidden');
                 document.getElementById('detailView').classList.add('active');
+                document.getElementById('forumPageHeader').style.display = 'none';
+                document.getElementById('forumFilters').style.display = 'none';
 
                 const { data: post } = await DB.getForumPost(postId);
                 if (!post) return;
@@ -650,6 +656,8 @@
                 e.preventDefault();
                 document.getElementById('listView').classList.remove('hidden');
                 document.getElementById('detailView').classList.remove('active');
+                document.getElementById('forumPageHeader').style.display = '';
+                document.getElementById('forumFilters').style.display = '';
             });
 
             // ==========================================

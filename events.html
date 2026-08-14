@@ -12,9 +12,6 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
         .events-page { padding: 100px 0 80px; min-height: 100vh; }
-        .events-header { text-align: center; max-width: 640px; margin: 0 auto 48px; }
-        .events-header h1 { font-size: 2.25rem; font-weight: 800; margin-bottom: 12px; }
-        .events-header p { color: var(--text-secondary); font-size: 1.05rem; }
 
         .events-layout { display: grid; grid-template-columns: 1fr 340px; gap: 40px; }
 
@@ -178,6 +175,7 @@
                         </button>
                     </div>
                 </div>                <div id="authLoggedOut"><a href="login.html" class="btn btn-outline btn-sm" data-i18n="nav.login">Se connecter</a></div>
+                <a href="search.html" class="nav-search-icon" aria-label="Recherche" title="Recherche" data-i18n-aria="nav.search"><i class="fas fa-search"></i></a>
                 <div id="authLoggedIn" style="display:none;"><a href="profile.html" class="btn btn-primary btn-sm">Mon profil</a></div>
             </div>
         </div>
@@ -185,9 +183,31 @@
 
     <div class="events-page">
         <div class="container">
-            <div class="events-header">
+            <div class="page-header">
                 <h1><span data-i18n="events.badge">Événements</span> <span class="text-gradient">TechDZ</span></h1>
                 <p data-i18n="events.desc">Meetups, workshops, hackathons et conférences IT en Algérie</p>
+            </div>
+
+            <div class="page-filters">
+                <div class="filter-group">
+                    <label data-i18n="jobs.searchLabel">Recherche</label>
+                    <input type="text" id="filterSearch" placeholder="Titre de l'événement..." data-i18n-placeholder="events.searchPlaceholder">
+                </div>
+                <div class="filter-group">
+                    <label data-i18n="events.typeLabel">Type</label>
+                    <select id="filterType">
+                        <option value="" data-i18n="events.all">Tous</option>
+                        <option value="meetup" data-i18n="events.typeMeetup">Meetup</option>
+                        <option value="workshop" data-i18n="events.typeWorkshop">Workshop</option>
+                        <option value="conference" data-i18n="events.typeConference">Conférence</option>
+                        <option value="hackathon" data-i18n="events.typeHackathon">Hackathon</option>
+                        <option value="webinar" data-i18n="events.typeWebinar">Webinaire</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>&nbsp;</label>
+                    <button class="filter-cta" id="newEventBtn"><i class="fas fa-plus"></i> <span data-i18n="events.create">Créer un événement</span></button>
+                </div>
             </div>
 
             <div class="events-layout">
@@ -199,11 +219,6 @@
                     <div class="sidebar-card">
                         <h3 data-i18n="events.upcoming">À venir</h3>
                         <div id="upcomingEvents"><div style="font-size:0.85rem;color:var(--text-muted)" data-i18n="events.loading">Chargement...</div></div>
-                    </div>
-                    <div class="sidebar-card">
-                        <h3 data-i18n="events.propose">Proposer un événement</h3>
-                        <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:12px;" data-i18n="events.proposeText">Organisez un meetup ou workshop TechDZ ?</p>
-                        <button class="btn btn-primary" style="width:100%" id="newEventBtn"><i class="fas fa-plus"></i> <span data-i18n="events.create">Créer un événement</span></button>
                     </div>
                 </div>
             </div>
@@ -293,8 +308,11 @@
                 return d.toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' });
             }
 
+            let currentType = '';
+            let currentSearch = '';
+
             async function loadEvents() {
-                const { data, error } = await DB.getEvents();
+                const { data, error } = await DB.getEvents({ type: currentType || undefined });
                 console.log('Events result:', { data, error, count: data?.length });
                 const list = document.getElementById('eventsList');
 
@@ -304,12 +322,18 @@
                     return;
                 }
 
-                if (!data || data.length === 0) {
+                let rows = data || [];
+                if (currentSearch) {
+                    const q = currentSearch.toLowerCase();
+                    rows = rows.filter(e => (e.title || '').toLowerCase().includes(q) || (e.description || '').toLowerCase().includes(q));
+                }
+
+                if (rows.length === 0) {
                     list.innerHTML = '<div class="empty-state"><i class="fas fa-calendar-alt"></i><p>' + t('events.empty') + '</p></div>';
                     return;
                 }
 
-                list.innerHTML = data.map(e => {
+                list.innerHTML = rows.map(e => {
                     const d = new Date(e.event_date);
                     const day = d.getDate();
                     const month = monthNames[d.getMonth()];
@@ -371,6 +395,16 @@
                 loadEvents();
                 loadUpcoming();
             };
+
+            document.getElementById('filterType').addEventListener('change', (e) => {
+                currentType = e.target.value;
+                loadEvents();
+            });
+            let filterTimeout;
+            document.getElementById('filterSearch').addEventListener('input', (e) => {
+                clearTimeout(filterTimeout);
+                filterTimeout = setTimeout(() => { currentSearch = e.target.value.trim(); loadEvents(); }, 300);
+            });
 
             document.getElementById('newEventBtn').addEventListener('click', () => {
                 if (!currentUser) { window.location.href = 'login.html'; return; }

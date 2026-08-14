@@ -12,23 +12,6 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
         .jobs-page { padding: 100px 0 80px; min-height: 100vh; }
-        .jobs-header { text-align: center; max-width: 640px; margin: 0 auto 48px; }
-        .jobs-header h1 { font-size: 2.25rem; font-weight: 800; margin-bottom: 12px; }
-        .jobs-header p { color: var(--text-secondary); font-size: 1.05rem; }
-
-        .jobs-filters {
-            display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 32px;
-            padding: 20px; background: var(--bg-secondary);
-            border: 1px solid var(--border-color); border-radius: var(--radius-lg);
-        }
-        .filter-group { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 160px; }
-        .filter-group label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
-        .filter-group select, .filter-group input {
-            padding: 10px 14px; background: var(--bg-card);
-            border: 1px solid var(--border-color); border-radius: var(--radius-sm);
-            color: var(--text-primary); font-size: 0.9rem; appearance: none; cursor: pointer;
-        }
-        .filter-group select:focus, .filter-group input:focus { border-color: var(--primary); outline: none; }
         .jobs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
         .job-card-full {
             padding: 28px; background: var(--bg-secondary);
@@ -71,14 +54,6 @@
         .job-salary-lg { font-size: 0.95rem; font-weight: 700; color: var(--secondary); }
         .job-date-lg { font-size: 0.78rem; color: var(--text-muted); }
 
-        .new-job-btn {
-            display: inline-flex; align-items: center; gap: 8px;
-            padding: 12px 24px; background: var(--gradient-primary);
-            color: #fff; border-radius: var(--radius-md);
-            font-weight: 600; font-size: 0.9rem; transition: all 0.2s;
-        }
-        .new-job-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px var(--primary-glow); }
-
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 24px; }
         .modal-overlay.open { display: flex; }
         .modal { width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-xl); padding: 32px; position: relative; }
@@ -95,7 +70,7 @@
         .loading { text-align: center; padding: 40px; color: var(--text-muted); }
         .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); grid-column: 1/-1; }
         .empty-state i { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.3; display: block; }
-        @media (max-width: 768px) { .jobs-grid { grid-template-columns: 1fr; } .jobs-filters { flex-direction: column; } .modal .form-row { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) { .jobs-grid { grid-template-columns: 1fr; } .modal .form-row { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -168,6 +143,7 @@
                         </button>
                     </div>
                 </div>                <div id="authLoggedOut"><a href="login.html" class="btn btn-outline btn-sm" data-i18n="nav.login">Se connecter</a></div>
+                <a href="search.html" class="nav-search-icon" aria-label="Recherche" title="Recherche" data-i18n-aria="nav.search"><i class="fas fa-search"></i></a>
                 <div id="authLoggedIn" style="display:none;"><a href="profile.html" class="btn btn-primary btn-sm">Mon profil</a></div>
             </div>
         </div>
@@ -175,12 +151,12 @@
 
     <div class="jobs-page">
         <div class="container">
-            <div class="jobs-header">
+            <div class="page-header">
                 <h1><span data-i18n="jobs.pageTitle">Offres d'emploi</span> <span class="text-gradient">IT</span></h1>
                 <p data-i18n="jobs.pageSubtitle">Des centaines d'opportunités pour tous les informaticiens en Algérie</p>
             </div>
 
-            <div class="jobs-filters">
+            <div class="page-filters">
                 <div class="filter-group">
                     <label data-i18n="jobs.searchLabel">Recherche</label>
                     <input type="text" placeholder="Poste, entreprise..." id="filterSearch" data-i18n-placeholder="jobs.searchPlaceholder">
@@ -209,7 +185,7 @@
                 </div>
                 <div class="filter-group">
                     <label>&nbsp;</label>
-                    <button class="new-job-btn" id="newJobBtn" style="width:100%;justify-content:center;">
+                    <button class="filter-cta" id="newJobBtn">
                         <i class="fas fa-plus"></i> <span data-i18n="jobs.postOffer">Publier une offre</span>
                     </button>
                 </div>

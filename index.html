@@ -124,9 +124,9 @@
                 </div>
                 <!-- Auth: Logged OUT -->
                 <div id="authLoggedOut">
-                    <a href="login.html" class="btn btn-outline" data-i18n="nav.login">Se connecter</a>
                     <a href="register.html" class="btn btn-primary" data-i18n="nav.join">Rejoindre</a>
                 </div>
+                <a href="search.html" class="nav-search-icon" aria-label="Recherche" title="Recherche" data-i18n-aria="nav.search"><i class="fas fa-search"></i></a>
                 <!-- Auth: Logged IN -->
                 <div id="authLoggedIn" style="display:none;">
                     <div class="user-menu" id="userMenu">
@@ -169,12 +169,12 @@
             <a href="news.html" class="mobile-link" data-i18n="nav.news">Actualités</a>
             <a href="events.html" class="mobile-link" data-i18n="nav.events">Événements</a>
             <a href="networking.html" class="mobile-link" data-i18n="nav.networking">Réseautage</a>
+            <a href="search.html" class="mobile-link" data-i18n="nav.search">Recherche</a>
         </div>
 
         <div class="mobile-nav-actions">
             <div id="mobileAuthOut">
-                <a href="login.html" class="btn btn-outline btn-full" data-i18n="nav.login">Se connecter</a>
-                <a href="register.html" class="btn btn-primary btn-full" style="margin-top:8px;" data-i18n="nav.join">Rejoindre TechDZ</a>
+                <a href="register.html" class="btn btn-primary btn-full" data-i18n="nav.join">Rejoindre TechDZ</a>
             </div>
             <div id="mobileAuthIn" style="display:none;">
                 <a href="profile.html" class="btn btn-outline btn-full" data-i18n="nav.profile">Mon profil</a>
@@ -210,7 +210,7 @@
                     <a href="#register" class="btn btn-primary btn-lg">
                         <i class="fas fa-rocket"></i> <span data-i18n="hero.cta1">Commencer gratuitement</span>
                     </a>
-                    <a href="#features" class="btn btn-outline btn-lg">
+                    <a href="#features" class="btn btn-outline btn-lg" id="discoverBtn">
                         <i class="fas fa-play-circle"></i> <span data-i18n="hero.cta2">Découvrir</span>
                     </a>
                 </div>
@@ -952,6 +952,17 @@
     </script>
     <script src="assets/js/effects/hero-animation.js?v=20260807" defer></script>
     <script src="assets/js/effects/themes.js" defer data-base=""></script>
+
+    <!-- Modale vidéo de présentation -->
+    <div class="video-modal" id="videoModal" aria-hidden="true" role="dialog" aria-modal="true" data-i18n-aria="video.title" aria-label="TechDZ — présentation">
+        <div class="video-modal-backdrop" data-video-close></div>
+        <div class="video-modal-card">
+            <button class="video-modal-close" data-video-close data-i18n-aria="common.close" aria-label="Fermer"><i class="fas fa-times"></i></button>
+            <div class="video-modal-frame">
+                <iframe id="videoFrame" src="" title="TechDZ — présentation" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
 

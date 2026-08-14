@@ -12,32 +12,6 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
         .networking-page { padding: 100px 0 80px; min-height: 100vh; }
-        .networking-header { text-align: center; max-width: 640px; margin: 0 auto 48px; }
-        .networking-header h1 { font-size: 2.25rem; font-weight: 800; margin-bottom: 12px; }
-        .networking-header p { color: var(--text-secondary); font-size: 1.05rem; }
-
-        .networking-tools {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 32px;
-            flex-wrap: wrap;
-        }
-        .networking-tools input,
-        .networking-tools select {
-            padding: 10px 16px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            color: var(--text-primary);
-            font-size: 0.9rem;
-            font-family: inherit;
-        }
-        .networking-tools input { flex: 1; min-width: 200px; }
-        .networking-tools input:focus,
-        .networking-tools select:focus {
-            border-color: var(--primary);
-            outline: none;
-        }
 
         .members-grid {
             display: grid;
@@ -123,8 +97,6 @@
 
         @media (max-width: 768px) {
             .members-grid { grid-template-columns: 1fr; }
-            .networking-tools { flex-direction: column; }
-            .networking-tools input { min-width: auto; }
         }
     </style>
 </head>
@@ -198,6 +170,7 @@
                         </button>
                     </div>
                 </div>                <div id="authLoggedOut"><a href="login.html" class="btn btn-outline btn-sm" data-i18n="nav.login">Se connecter</a></div>
+                <a href="search.html" class="nav-search-icon" aria-label="Recherche" title="Recherche" data-i18n-aria="nav.search"><i class="fas fa-search"></i></a>
                 <div id="authLoggedIn" style="display:none;"><a href="profile.html" class="btn btn-primary btn-sm">Mon profil</a></div>
             </div>
         </div>
@@ -205,7 +178,7 @@
 
     <div class="networking-page">
         <div class="container">
-            <div class="networking-header">
+            <div class="page-header">
                 <h1><span data-i18n="nav.networking">Réseautage</span> <span class="text-gradient">TechDZ</span></h1>
                 <p data-i18n="networking.pageSubtitle">Connectez-vous avec les professionnels IT en Algérie</p>
             </div>
@@ -219,14 +192,23 @@
                 <div class="online-now-list" id="onlineNowList"></div>
             </div>
 
-            <div class="networking-tools">
-                <input type="text" id="searchInput" placeholder="Rechercher un membre..." data-i18n-placeholder="networking.searchPlaceholder">
-                <select id="cityFilter">
-                    <option value="" data-i18n="networking.allCities">Toutes les villes</option>
-                </select>
-                <select id="skillFilter">
-                    <option value="" data-i18n="networking.allSkills">Tous les domaines</option>
-                </select>
+            <div class="page-filters">
+                <div class="filter-group">
+                    <label data-i18n="jobs.searchLabel">Recherche</label>
+                    <input type="text" id="searchInput" placeholder="Rechercher un membre..." data-i18n-placeholder="networking.searchPlaceholder">
+                </div>
+                <div class="filter-group">
+                    <label data-i18n="networking.cityLabel">Ville</label>
+                    <select id="cityFilter">
+                        <option value="" data-i18n="networking.allCities">Toutes les villes</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label data-i18n="networking.skillLabel">Domaine</label>
+                    <select id="skillFilter">
+                        <option value="" data-i18n="networking.allSkills">Tous les domaines</option>
+                    </select>
+                </div>
             </div>
 
             <div class="members-count" id="membersCount"></div>
