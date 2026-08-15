@@ -368,20 +368,90 @@ input {
   gap: 12px;
 }
 
+/* Toggle thème — interrupteur soleil / lune lumineux */
 .theme-toggle {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-secondary);
-  transition: all var(--transition-fast);
+  width: 58px;
+  height: 30px;
+  position: relative;
+  padding: 0;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-color);
+  background: linear-gradient(135deg, #fde68a, #7dd3fc);
+  overflow: hidden;
+  transition: background var(--transition), border-color var(--transition), box-shadow var(--transition-fast);
 }
 
 .theme-toggle:hover {
-  background: rgba(59, 130, 246, 0.1);
-  color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.14);
+}
+
+.theme-switch-track {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5px;
+  direction: ltr;
+  pointer-events: none;
+}
+
+.theme-switch-sun,
+.theme-switch-moon {
+  position: relative;
+  z-index: 1;
+  font-size: 0.78rem;
+  line-height: 1;
+  transition: opacity var(--transition-fast), color var(--transition-fast), filter var(--transition-fast);
+}
+
+.theme-switch-sun {
+  color: #f59e0b;
+  filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.9)) drop-shadow(0 0 10px rgba(245, 158, 11, 0.55));
+}
+
+.theme-switch-moon {
+  color: #818cf8;
+  filter: drop-shadow(0 0 4px rgba(129, 140, 248, 0.9)) drop-shadow(0 0 10px rgba(129, 140, 248, 0.55));
+  opacity: 0.5;
+}
+
+.theme-switch-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.35), 0 0 12px rgba(255, 255, 255, 0.6);
+  z-index: 2;
+  transition: transform var(--transition);
+}
+
+html[data-theme="dark"] .theme-toggle {
+  background: linear-gradient(135deg, #312e81, #1e1b4b);
+  border-color: rgba(148, 163, 184, 0.25);
+}
+
+html[data-theme="dark"] .theme-toggle:hover {
+  box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.15);
+}
+
+html[data-theme="dark"] .theme-switch-sun {
+  opacity: 0.45;
+  filter: drop-shadow(0 0 3px rgba(245, 158, 11, 0.35));
+}
+
+html[data-theme="dark"] .theme-switch-moon {
+  opacity: 1;
+  filter: drop-shadow(0 0 5px rgba(129, 140, 248, 0.95)) drop-shadow(0 0 14px rgba(129, 140, 248, 0.6));
+}
+
+html[data-theme="dark"] .theme-switch-thumb {
+  transform: translateX(28px);
+  background: linear-gradient(135deg, #c7d2fe, #818cf8);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5), 0 0 14px rgba(129, 140, 248, 0.7);
 }
 
 /* Language Switcher */
@@ -401,20 +471,26 @@ input {
 
 .lang-btn:hover {
   background: rgba(59, 130, 246, 0.1);
-  color: var(--text-primary);
+  color: var(--primary);
 }
 
 .lang-flag {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 700;
-  color: #fff;
-  background: var(--primary);
+  color: var(--text-secondary);
+  background: transparent;
+  transition: all var(--transition-fast);
+}
+
+.lang-flag:hover {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--primary);
 }
 
 .lang-btn .fa-chevron-down {
@@ -830,6 +906,34 @@ input {
   line-height: 1.4;
   padding: 12px 16px;
 }
+
+/* Contrôles navbar déplacés dans le menu mobile
+   (switch thème, palettes, animation, loupe, badge online) */
+.mobile-nav-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 0 6px;
+  margin-top: 16px;
+  border-top: 1px solid var(--border-color);
+}
+
+.mobile-nav-controls .online-badge { font-size: 0.8rem; }
+
+/* Menus des palettes ouverts depuis le menu mobile : centrés, au-dessus du bas */
+.mobile-nav .theme-picker-menu {
+  position: fixed;
+  top: auto;
+  right: auto;
+  left: 50%;
+  bottom: 88px;
+  transform: translateX(-50%);
+  z-index: 2100;
+}
+
+.mobile-nav .theme-picker-menu.open { transform: translateX(-50%); }
 
 .mobile-overlay {
   position: fixed;
@@ -2224,6 +2328,16 @@ section {
   .nav-links, .nav-actions .btn, #authLoggedOut, #authLoggedIn { display: none !important; }
   .mobile-toggle { display: flex; }
 
+  /* Navbar mobile : seul le drapeau (langue) reste à côté du logo ;
+     switch, palettes, animation, loupe et badge vivent dans le menu hamburger */
+  .navbar .nav-actions > :not(.lang-switcher) { display: none !important; }
+  .nav-actions { gap: 8px; margin-inline-start: auto; }
+  .nav-container { justify-content: flex-start; gap: 10px; }
+  .lang-btn { padding: 4px 6px; gap: 5px; }
+  .lang-btn .fa-chevron-down { font-size: 0.55rem; }
+  .container { padding: 0 16px; }
+  .nav-logo img { height: 22px; }
+
   .hero { padding: 100px 0 60px; }
   .hero-visual { display: none; }
   .hero-stats { flex-direction: column; gap: 16px; }
@@ -3411,32 +3525,29 @@ body.hero-anim-ready .nav-actions {
 .filter-cta:hover { transform: translateY(-2px); box-shadow: 0 4px 15px var(--primary-glow); }
 
 @media (max-width: 768px) {
-  .page-filters { flex-direction: column; }
-  .filter-group { flex: 1 1 100%; min-width: 0; }
+  .page-filters { flex-direction: column; align-items: stretch; }
+  .filter-group { flex: none; width: 100%; min-width: 0; }
+  .filter-group select,
+  .filter-group > input { width: 100%; }
+  .filter-group:has(.filter-cta) label { display: none; }
 }
 
-/* Icône loupe premium de la navbar (accueil + pages forum → networking) */
+/* Icône loupe de la navbar (accueil + pages forum → networking) —
+   alignée sur les autres icônes navbar (toggle thème) */
 .nav-search-icon {
   width: 40px;
   height: 40px;
   flex-shrink: 0;
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-sm);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   color: var(--text-secondary);
   font-size: 1rem;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: all var(--transition-fast);
 }
 
 .nav-search-icon:hover {
-  color: #fff;
-  background: var(--gradient-primary);
-  border-color: var(--primary);
-  transform: translateY(-2px) scale(1.1);
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.18), 0 12px 26px var(--primary-glow);
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--primary);
 }
-
-.nav-search-icon:active { transform: scale(0.9); }
