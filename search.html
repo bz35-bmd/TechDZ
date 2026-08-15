@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-i18n="title.search">Recherche — TechDZ</title>
+    <title data-i18n="title.search">Recherche â€” TechDZ</title>
     <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=20260819">
     <style>
         .search-page { padding: 100px 0 80px; min-height: 100vh; }
         .search-header { text-align: center; max-width: 720px; margin: 0 auto 40px; }
@@ -108,25 +108,29 @@
         <div class="container nav-container">
             <a href="index.html" class="nav-logo"><img src="assets/img/logo.svg" alt="TechDZ" height="32"></a>
             <div class="nav-links">
-                <a href="index.html#features" class="nav-link" data-i18n="nav.features">Fonctionnalités</a>
+                <a href="index.html#features" class="nav-link" data-i18n="nav.features">FonctionnalitÃ©s</a>
                 <a href="forum.html" class="nav-link" data-i18n="nav.forum">Forum</a>
                 <a href="jobs.html" class="nav-link" data-i18n="nav.jobs">Emplois</a>
                 <a href="training.html" class="nav-link" data-i18n="nav.training">Formations</a>
-                <a href="news.html" class="nav-link" data-i18n="nav.news">Actualités</a>
-                <a href="events.html" class="nav-link" data-i18n="nav.events">Événements</a>
-                <a href="networking.html" class="nav-link" data-i18n="nav.networking">Réseautage</a>
+                <a href="news.html" class="nav-link" data-i18n="nav.news">ActualitÃ©s</a>
+                <a href="events.html" class="nav-link" data-i18n="nav.events">Ã‰vÃ©nements</a>
+                <a href="networking.html" class="nav-link" data-i18n="nav.networking">RÃ©seautage</a>
                 <a href="search.html" class="nav-link" style="color:var(--primary)" data-i18n="nav.search">Recherche</a>
             </div>
             <div class="nav-actions">
-                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-                    <i class="fas fa-moon"></i>
+                <button class="theme-toggle" id="themeToggle" role="switch" aria-checked="false" aria-label="Toggle theme">
+                    <span class="theme-switch-track">
+                        <i class="fas fa-sun theme-switch-sun"></i>
+                        <i class="fas fa-moon theme-switch-moon"></i>
+                        <span class="theme-switch-thumb"></span>
+                    </span>
                 </button>
 <div class="theme-picker">
-    <button class="theme-picker-btn" id="themePickerBtn" aria-label="Choisir le thème" data-i18n-aria="theme.choose" aria-haspopup="true" aria-expanded="false">
+    <button class="theme-picker-btn" id="themePickerBtn" aria-label="Choisir le thÃ¨me" data-i18n-aria="theme.choose" aria-haspopup="true" aria-expanded="false">
         <i class="fas fa-palette"></i>
     </button>
     <div class="theme-picker-menu" id="themePickerMenu" role="menu">
-        <div class="theme-picker-header" data-i18n="theme.title">Thème du site</div>
+        <div class="theme-picker-header" data-i18n="theme.title">ThÃ¨me du site</div>
         <button class="theme-option" data-theme-option="code" role="menuitemradio" aria-checked="false">
             <span class="theme-swatch swatch-code"></span>
             <span class="theme-option-text"><strong data-i18n="theme.code">Code</strong><small data-i18n="theme.codeDesc">Encre liquide + &lt;/&gt;</small></span>
@@ -134,22 +138,22 @@
         </button>
         <button class="theme-option" data-theme-option="signal" role="menuitemradio" aria-checked="false">
             <span class="theme-swatch swatch-signal"></span>
-            <span class="theme-option-text"><strong data-i18n="theme.signal">Signal</strong><small data-i18n="theme.signalDesc">Réseau + nœud</small></span>
+            <span class="theme-option-text"><strong data-i18n="theme.signal">Signal</strong><small data-i18n="theme.signalDesc">RÃ©seau + nÅ“ud</small></span>
             <i class="fas fa-check theme-check"></i>
         </button>
         <button class="theme-option" data-theme-option="fusion" role="menuitemradio" aria-checked="false">
             <span class="theme-swatch swatch-fusion"></span>
-            <span class="theme-option-text"><strong data-i18n="theme.fusion">Fusion</strong><small data-i18n="theme.fusionDesc">Encre + nœud</small></span>
+            <span class="theme-option-text"><strong data-i18n="theme.fusion">Fusion</strong><small data-i18n="theme.fusionDesc">Encre + nÅ“ud</small></span>
             <i class="fas fa-check theme-check"></i>
         </button>
         <button class="theme-option" data-theme-option="dunes" role="menuitemradio" aria-checked="false">
             <span class="theme-swatch swatch-dunes"></span>
-            <span class="theme-option-text"><strong data-i18n="theme.dunes">Dunes</strong><small data-i18n="theme.dunesDesc">Sahara + réseau or</small></span>
+            <span class="theme-option-text"><strong data-i18n="theme.dunes">Dunes</strong><small data-i18n="theme.dunesDesc">Sahara + rÃ©seau or</small></span>
             <i class="fas fa-check theme-check"></i>
         </button>
         <button class="theme-option" data-theme-option="nuit" role="menuitemradio" aria-checked="false">
             <span class="theme-swatch swatch-nuit"></span>
-            <span class="theme-option-text"><strong data-i18n="theme.nuit">Nuit</strong><small data-i18n="theme.nuitDesc">Étoiles + réseau indigo</small></span>
+            <span class="theme-option-text"><strong data-i18n="theme.nuit">Nuit</strong><small data-i18n="theme.nuitDesc">Ã‰toiles + rÃ©seau indigo</small></span>
             <i class="fas fa-check theme-check"></i>
         </button>
     </div>
@@ -162,7 +166,7 @@
                     <div class="lang-dropdown" id="langDropdown">
                         <button class="lang-option active" data-lang="fr">
                             <span class="lang-flag">FR</span>
-                            <span>Français</span>
+                            <span>FranÃ§ais</span>
                         </button>
                         <button class="lang-option" data-lang="en">
                             <span class="lang-flag">EN</span>
@@ -170,20 +174,56 @@
                         </button>
                         <button class="lang-option" data-lang="ar">
                             <span class="lang-flag">AR</span>
-                            <span>العربية</span>
+                            <span>Ø§Ù„Ø¹Ø±Ø¨ÙŠØ©</span>
                         </button>
                     </div>
                 </div>                <div id="authLoggedOut"><a href="login.html" class="btn btn-outline btn-sm" data-i18n="nav.login">Se connecter</a></div>
                 <div id="authLoggedIn" style="display:none;"><a href="profile.html" class="btn btn-primary btn-sm">Mon profil</a></div>
             </div>
+            <button class="mobile-toggle" id="mobileToggle" data-i18n-aria="common.menu" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
         </div>
     </nav>
+
+    <!-- MOBILE NAV -->
+    <div class="mobile-nav" id="mobileNav">
+        <div class="mobile-nav-header">
+            <img src="assets/img/logo.svg" alt="TechDZ" height="28">
+            <button class="close-btn" id="mobileClose" data-i18n-aria="common.close" aria-label="Fermer">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="mobile-nav-links">
+            <a href="index.html#features" class="mobile-link" data-i18n="nav.features">FonctionnalitÃ©s</a>
+            <a href="forum.html" class="mobile-link" data-i18n="nav.forum">Forum</a>
+            <a href="jobs.html" class="mobile-link" data-i18n="nav.jobs">Emplois</a>
+            <a href="training.html" class="mobile-link" data-i18n="nav.training">Formations</a>
+            <a href="news.html" class="mobile-link" data-i18n="nav.news">ActualitÃ©s</a>
+            <a href="events.html" class="mobile-link" data-i18n="nav.events">Ã‰vÃ©nements</a>
+            <a href="networking.html" class="mobile-link" data-i18n="nav.networking">RÃ©seautage</a>
+            <a href="search.html" class="mobile-link" data-i18n="nav.search">Recherche</a>
+        </div>
+
+        <div class="mobile-nav-controls" id="mobileNavControls"></div>
+
+        <div class="mobile-nav-actions">
+            <div id="mobileAuthOut">
+                <a href="login.html" class="btn btn-primary btn-full" data-i18n="nav.login">Se connecter</a>
+            </div>
+            <div id="mobileAuthIn" style="display:none;">
+                <a href="profile.html" class="btn btn-outline btn-full" data-i18n="nav.profile">Mon profil</a>
+                <button class="btn btn-primary btn-full" style="margin-top:8px;" id="mobileLogoutBtn"><span data-i18n="common.logout">DÃ©connexion</span></button>
+            </div>
+        </div>
+    </div>
+    <div class="mobile-overlay" id="mobileOverlay"></div>
 
     <div class="search-page">
         <div class="container">
             <div class="search-header">
                 <h1><span data-i18n="search.title">Recherche</span> <span class="text-gradient">TechDZ</span></h1>
-                <p data-i18n="search.subtitle">Recherchez dans toute la communauté : forum, emplois, formations, événements, actualités et membres</p>
+                <p data-i18n="search.subtitle">Recherchez dans toute la communautÃ© : forum, emplois, formations, Ã©vÃ©nements, actualitÃ©s et membres</p>
             </div>
 
             <div class="search-big" id="searchBig">
@@ -203,7 +243,7 @@
     <script src="assets/js/db.js?v=20260807"></script>
     <script src="assets/js/translations.js?v=20260807"></script>
     <script src="assets/js/i18n.js?v=20260807"></script>
-    <script src="assets/js/script.js?v=20260807"></script>
+    <script src="assets/js/script.js?v=20260818"></script>
     <script>
     (() => {
         const input = document.getElementById('searchPageInput');
@@ -275,11 +315,11 @@
 
             const total = rPosts.length + rJobs.length + rCourses.length + rEvents.length + rNews.length + rMembers.length;
             infoEl.textContent = total > 0
-                ? `${total} ${t('search.results', 'résultat(s)')} · « ${q.trim()} »`
-                : `${t('search.noResults', 'Aucun résultat pour')} « ${q.trim()} »`;
+                ? `${total} ${t('search.results', 'rÃ©sultat(s)')} Â· Â« ${q.trim()} Â»`
+                : `${t('search.noResults', 'Aucun rÃ©sultat pour')} Â« ${q.trim()} Â»`;
 
             if (total === 0) {
-                resultsEl.innerHTML = `<div class="search-empty"><i class="fas fa-search"></i><p>${t('search.noResultsHint', 'Essayez d\'autres mots-clés ou consultez les sections du site.')}</p></div>`;
+                resultsEl.innerHTML = `<div class="search-empty"><i class="fas fa-search"></i><p>${t('search.noResultsHint', 'Essayez d\'autres mots-clÃ©s ou consultez les sections du site.')}</p></div>`;
                 return;
             }
 
@@ -289,19 +329,19 @@
                     esc(p.title), esc(p.category?.name || ''), esc(p.content))).join(''));
             if (rJobs.length) html += section(t('search.jobs', 'Emplois'), 'fa-briefcase', rJobs.length,
                 rJobs.slice(0, 5).map(j => item(link('jobs.html'),
-                    esc(j.title), esc(j.company) + (j.location ? ' • ' + esc(j.location) : ''), esc(j.description))).join(''));
+                    esc(j.title), esc(j.company) + (j.location ? ' â€¢ ' + esc(j.location) : ''), esc(j.description))).join(''));
             if (rCourses.length) html += section(t('search.training', 'Formations'), 'fa-graduation-cap', rCourses.length,
                 rCourses.slice(0, 5).map(c => item(link('training.html'),
-                    esc(c.title), esc(c.level || '') + (c.category ? ' • ' + esc(c.category) : ''), esc(c.description))).join(''));
-            if (rEvents.length) html += section(t('search.events', 'Événements'), 'fa-calendar-alt', rEvents.length,
+                    esc(c.title), esc(c.level || '') + (c.category ? ' â€¢ ' + esc(c.category) : ''), esc(c.description))).join(''));
+            if (rEvents.length) html += section(t('search.events', 'Ã‰vÃ©nements'), 'fa-calendar-alt', rEvents.length,
                 rEvents.slice(0, 5).map(e => item(link('events.html'),
                     esc(e.title), esc(e.location || ''), esc(e.description))).join(''));
-            if (rNews.length) html += section(t('search.news', 'Actualités'), 'fa-newspaper', rNews.length,
+            if (rNews.length) html += section(t('search.news', 'ActualitÃ©s'), 'fa-newspaper', rNews.length,
                 rNews.slice(0, 5).map(n => item(link('news.html'),
                     esc(n.title), esc(n.category || ''), esc(n.content))).join(''));
             if (rMembers.length) html += section(t('search.members', 'Membres'), 'fa-users', rMembers.length,
                 rMembers.slice(0, 5).map(m => item(link('networking.html'),
-                    esc(m.full_name), esc(m.job_title || '') + (m.city ? ' • ' + esc(m.city) : ''), (m.skills || []).join(' • '))).join(''));
+                    esc(m.full_name), esc(m.job_title || '') + (m.city ? ' â€¢ ' + esc(m.city) : ''), (m.skills || []).join(' â€¢ '))).join(''));
 
             resultsEl.innerHTML = html;
         }

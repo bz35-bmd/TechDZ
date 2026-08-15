@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-i18n="title.index">TechDZ — La Communauté IT d'Algérie</title>
-    <meta name="description" content="Rejoignez TechDZ, la plus grande communauté d'informaticiens en Algérie. Forum, emplois, formations, actualités et événements tech.">
+    <title data-i18n="title.index">TechDZ â€” La CommunautÃ© IT d'AlgÃ©rie</title>
+    <meta name="description" content="Rejoignez TechDZ, la plus grande communautÃ© d'informaticiens en AlgÃ©rie. Forum, emplois, formations, actualitÃ©s et Ã©vÃ©nements tech.">
     <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=20260819">
 </head>
 <body>
     <!-- PRELOADER -->
@@ -34,24 +34,28 @@
                 <img src="assets/img/logo.svg" alt="TechDZ" height="32">
             </a>
             <div class="nav-links" id="navLinks">
-                <a href="#features" class="nav-link" data-i18n="nav.features">Fonctionnalités</a>
+                <a href="#features" class="nav-link" data-i18n="nav.features">FonctionnalitÃ©s</a>
                 <a href="forum.html" class="nav-link" data-i18n="nav.forum">Forum</a>
                 <a href="jobs.html" class="nav-link" data-i18n="nav.jobs">Emplois</a>
                 <a href="training.html" class="nav-link" data-i18n="nav.training">Formations</a>
-                <a href="news.html" class="nav-link" data-i18n="nav.news">Actualités</a>
-                <a href="events.html" class="nav-link" data-i18n="nav.events">Événements</a>
-                <a href="networking.html" class="nav-link" data-i18n="nav.networking">Réseautage</a>
+                <a href="news.html" class="nav-link" data-i18n="nav.news">ActualitÃ©s</a>
+                <a href="events.html" class="nav-link" data-i18n="nav.events">Ã‰vÃ©nements</a>
+                <a href="networking.html" class="nav-link" data-i18n="nav.networking">RÃ©seautage</a>
             </div>
             <div class="nav-actions">
-                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-                    <i class="fas fa-moon"></i>
+                <button class="theme-toggle" id="themeToggle" role="switch" aria-checked="false" aria-label="Toggle theme">
+                    <span class="theme-switch-track">
+                        <i class="fas fa-sun theme-switch-sun"></i>
+                        <i class="fas fa-moon theme-switch-moon"></i>
+                        <span class="theme-switch-thumb"></span>
+                    </span>
                 </button>
 <div class="theme-picker">
-    <button class="theme-picker-btn" id="themePickerBtn" aria-label="Choisir le thème" data-i18n-aria="theme.choose" aria-haspopup="true" aria-expanded="false">
+    <button class="theme-picker-btn" id="themePickerBtn" aria-label="Choisir le thÃ¨me" data-i18n-aria="theme.choose" aria-haspopup="true" aria-expanded="false">
         <i class="fas fa-palette"></i>
     </button>
     <div class="theme-picker-menu" id="themePickerMenu" role="menu">
-        <div class="theme-picker-header" data-i18n="theme.title">Thème du site</div>
+        <div class="theme-picker-header" data-i18n="theme.title">ThÃ¨me du site</div>
         <button class="theme-option" data-theme-option="code" role="menuitemradio" aria-checked="false">
             <span class="theme-swatch swatch-code"></span>
             <span class="theme-option-text"><strong data-i18n="theme.code">Code</strong><small data-i18n="theme.codeDesc">Encre liquide + &lt;/&gt;</small></span>
@@ -59,22 +63,22 @@
         </button>
         <button class="theme-option" data-theme-option="signal" role="menuitemradio" aria-checked="false">
             <span class="theme-swatch swatch-signal"></span>
-            <span class="theme-option-text"><strong data-i18n="theme.signal">Signal</strong><small data-i18n="theme.signalDesc">Réseau + nœud</small></span>
+            <span class="theme-option-text"><strong data-i18n="theme.signal">Signal</strong><small data-i18n="theme.signalDesc">RÃ©seau + nÅ“ud</small></span>
             <i class="fas fa-check theme-check"></i>
         </button>
         <button class="theme-option" data-theme-option="fusion" role="menuitemradio" aria-checked="false">
             <span class="theme-swatch swatch-fusion"></span>
-            <span class="theme-option-text"><strong data-i18n="theme.fusion">Fusion</strong><small data-i18n="theme.fusionDesc">Encre + nœud</small></span>
+            <span class="theme-option-text"><strong data-i18n="theme.fusion">Fusion</strong><small data-i18n="theme.fusionDesc">Encre + nÅ“ud</small></span>
             <i class="fas fa-check theme-check"></i>
         </button>
         <button class="theme-option" data-theme-option="dunes" role="menuitemradio" aria-checked="false">
             <span class="theme-swatch swatch-dunes"></span>
-            <span class="theme-option-text"><strong data-i18n="theme.dunes">Dunes</strong><small data-i18n="theme.dunesDesc">Sahara + réseau or</small></span>
+            <span class="theme-option-text"><strong data-i18n="theme.dunes">Dunes</strong><small data-i18n="theme.dunesDesc">Sahara + rÃ©seau or</small></span>
             <i class="fas fa-check theme-check"></i>
         </button>
         <button class="theme-option" data-theme-option="nuit" role="menuitemradio" aria-checked="false">
             <span class="theme-swatch swatch-nuit"></span>
-            <span class="theme-option-text"><strong data-i18n="theme.nuit">Nuit</strong><small data-i18n="theme.nuitDesc">Étoiles + réseau indigo</small></span>
+            <span class="theme-option-text"><strong data-i18n="theme.nuit">Nuit</strong><small data-i18n="theme.nuitDesc">Ã‰toiles + rÃ©seau indigo</small></span>
             <i class="fas fa-check theme-check"></i>
         </button>
     </div>
@@ -87,12 +91,12 @@
         <div class="theme-picker-header" data-i18n="heroanim.title">Animation du hero</div>
         <button class="theme-option" data-hero-anim="minimal" role="menuitemradio" aria-checked="false">
             <span class="theme-swatch ha-swatch ha-minimal"></span>
-            <span class="theme-option-text"><strong data-i18n="heroanim.minimal">Minimal</strong><small data-i18n="heroanim.minimalDesc">Entrée en cascade</small></span>
+            <span class="theme-option-text"><strong data-i18n="heroanim.minimal">Minimal</strong><small data-i18n="heroanim.minimalDesc">EntrÃ©e en cascade</small></span>
             <i class="fas fa-check theme-check"></i>
         </button>
         <button class="theme-option" data-hero-anim="network" role="menuitemradio" aria-checked="false">
             <span class="theme-swatch ha-swatch ha-network"></span>
-            <span class="theme-option-text"><strong data-i18n="heroanim.network">Network</strong><small data-i18n="heroanim.networkDesc">Le réseau se tisse</small></span>
+            <span class="theme-option-text"><strong data-i18n="heroanim.network">Network</strong><small data-i18n="heroanim.networkDesc">Le rÃ©seau se tisse</small></span>
             <i class="fas fa-check theme-check"></i>
         </button>
         <button class="theme-option" data-hero-anim="signal" role="menuitemradio" aria-checked="false">
@@ -110,7 +114,7 @@
                     <div class="lang-dropdown" id="langDropdown">
                         <button class="lang-option active" data-lang="fr">
                             <span class="lang-flag">FR</span>
-                            <span>Français</span>
+                            <span>FranÃ§ais</span>
                         </button>
                         <button class="lang-option" data-lang="en">
                             <span class="lang-flag">EN</span>
@@ -118,7 +122,7 @@
                         </button>
                         <button class="lang-option" data-lang="ar">
                             <span class="lang-flag">AR</span>
-                            <span>العربية</span>
+                            <span>Ø§Ù„Ø¹Ø±Ø¨ÙŠØ©</span>
                         </button>
                     </div>
                 </div>
@@ -142,7 +146,7 @@
                             <a href="profile.html" class="dropdown-item"><i class="fas fa-user"></i> <span data-i18n="nav.profile">Mon profil</span></a>
                             <a href="admin/index.html" class="dropdown-item" id="adminLink" style="display:none;"><i class="fas fa-cog"></i> <span data-i18n="nav.admin">Admin</span></a>
                             <div class="dropdown-divider"></div>
-                            <button class="dropdown-item logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> <span data-i18n="common.logout">Déconnexion</span></button>
+                            <button class="dropdown-item logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> <span data-i18n="common.logout">DÃ©connexion</span></button>
                         </div>
                     </div>
                 </div>
@@ -162,15 +166,17 @@
             </button>
         </div>
         <div class="mobile-nav-links">
-            <a href="#features" class="mobile-link" data-i18n="nav.features">Fonctionnalités</a>
+            <a href="#features" class="mobile-link" data-i18n="nav.features">FonctionnalitÃ©s</a>
             <a href="forum.html" class="mobile-link" data-i18n="nav.forum">Forum</a>
             <a href="jobs.html" class="mobile-link" data-i18n="nav.jobs">Emplois</a>
             <a href="training.html" class="mobile-link" data-i18n="nav.training">Formations</a>
-            <a href="news.html" class="mobile-link" data-i18n="nav.news">Actualités</a>
-            <a href="events.html" class="mobile-link" data-i18n="nav.events">Événements</a>
-            <a href="networking.html" class="mobile-link" data-i18n="nav.networking">Réseautage</a>
+            <a href="news.html" class="mobile-link" data-i18n="nav.news">ActualitÃ©s</a>
+            <a href="events.html" class="mobile-link" data-i18n="nav.events">Ã‰vÃ©nements</a>
+            <a href="networking.html" class="mobile-link" data-i18n="nav.networking">RÃ©seautage</a>
             <a href="search.html" class="mobile-link" data-i18n="nav.search">Recherche</a>
         </div>
+
+        <div class="mobile-nav-controls" id="mobileNavControls"></div>
 
         <div class="mobile-nav-actions">
             <div id="mobileAuthOut">
@@ -178,7 +184,7 @@
             </div>
             <div id="mobileAuthIn" style="display:none;">
                 <a href="profile.html" class="btn btn-outline btn-full" data-i18n="nav.profile">Mon profil</a>
-                <button class="btn btn-primary btn-full" style="margin-top:8px;" id="mobileLogoutBtn"><span data-i18n="common.logout">Déconnexion</span></button>
+                <button class="btn btn-primary btn-full" style="margin-top:8px;" id="mobileLogoutBtn"><span data-i18n="common.logout">DÃ©connexion</span></button>
             </div>
         </div>
     </div>
@@ -200,18 +206,18 @@
                     <span data-i18n="hero.badge">informaticiens nous ont rejoints</span>
                 </div>
                 <h1 class="hero-title">
-                    <span data-i18n="hero.title1">La communauté IT</span>
-                    <span class="text-gradient" data-i18n="hero.title2">de l'Algérie</span>
+                    <span data-i18n="hero.title1">La communautÃ© IT</span>
+                    <span class="text-gradient" data-i18n="hero.title2">de l'AlgÃ©rie</span>
                 </h1>
                 <p class="hero-desc" data-i18n="hero.desc">
-                    Que vous soyez développeur, administrateur réseau, analyste de données, chef de projet IT, designer UI/UX, administrateur système ou spécialiste en cybersécurité — TechDZ est votre espace pour échanger, apprendre et progresser. Forum, emplois, formations et actualités — tout est ici.
+                    Que vous soyez dÃ©veloppeur, administrateur rÃ©seau, analyste de donnÃ©es, chef de projet IT, designer UI/UX, administrateur systÃ¨me ou spÃ©cialiste en cybersÃ©curitÃ© â€” TechDZ est votre espace pour Ã©changer, apprendre et progresser. Forum, emplois, formations et actualitÃ©s â€” tout est ici.
                 </p>
                 <div class="hero-cta">
                     <a href="#register" class="btn btn-primary btn-lg">
                         <i class="fas fa-rocket"></i> <span data-i18n="hero.cta1">Commencer gratuitement</span>
                     </a>
                     <a href="#features" class="btn btn-outline btn-lg" id="discoverBtn">
-                        <i class="fas fa-play-circle"></i> <span data-i18n="hero.cta2">Découvrir</span>
+                        <i class="fas fa-play-circle"></i> <span data-i18n="hero.cta2">DÃ©couvrir</span>
                     </a>
                 </div>
                 <div class="hero-stats">
@@ -245,11 +251,11 @@
                             <div class="card-avatar green" id="heroCard1Avatar">KM</div>
                             <div class="card-info">
                                 <strong id="heroCard1Name">Karim M.</strong>
-                                <span id="heroCard1Role" data-i18n="hero.cardRole1">Ingénieur Réseau</span>
+                                <span id="heroCard1Role" data-i18n="hero.cardRole1">IngÃ©nieur RÃ©seau</span>
                             </div>
                             <span class="card-badge" data-i18n="hero.cardActive">Actif</span>
                         </div>
-                        <p class="card-text" id="heroCard1Text" data-i18n="hero.cardText">"Grâce à TechDZ, j'ai pu résoudre un problème critique de BGP et décrocher un poste dans une telecom algérienne."</p>
+                        <p class="card-text" id="heroCard1Text" data-i18n="hero.cardText">"GrÃ¢ce Ã  TechDZ, j'ai pu rÃ©soudre un problÃ¨me critique de BGP et dÃ©crocher un poste dans une telecom algÃ©rienne."</p>
                         <div class="card-reactions" id="heroCard1Skills">
                             <span><i class="fas fa-heart"></i> 52</span>
                             <span><i class="fas fa-comment"></i> 18</span>
@@ -262,7 +268,7 @@
                             <div class="card-avatar blue" id="heroCard2Avatar">SA</div>
                             <div class="card-info">
                                 <strong id="heroCard2Name">Samir A.</strong>
-                                <span id="heroCard2Role" data-i18n="hero.cardRole2">Admin Système & Cloud</span>
+                                <span id="heroCard2Role" data-i18n="hero.cardRole2">Admin SystÃ¨me & Cloud</span>
                             </div>
                         </div>
                         <div class="card-code" id="heroCard2Post">
@@ -276,9 +282,9 @@
                 <div class="hero-card hero-card-3">
                     <div class="hero-card-inner">
                         <div class="card-event">
-                            <span class="event-date"><span id="heroCard3Day">15</span> <span data-i18n="index.eventMonth" id="heroCard3Month">AOÛT</span></span>
+                            <span class="event-date"><span id="heroCard3Day">15</span> <span data-i18n="index.eventMonth" id="heroCard3Month">AOÃ›T</span></span>
                             <div>
-                                <strong data-i18n="index.eventTitle" id="heroCard3Title">Meetup Cybersécurité</strong>
+                                <strong data-i18n="index.eventTitle" id="heroCard3Title">Meetup CybersÃ©curitÃ©</strong>
                                 <span data-i18n="index.eventAttendees" id="heroCard3Attendees">45+ participants attendus</span>
                             </div>
                         </div>
@@ -297,7 +303,7 @@
                         <span class="online-pulse"><span></span></span>
                         <div>
                             <span class="section-badge" data-i18n="online.badge">En direct</span>
-                            <h2 class="section-title-left" data-i18n="online.title">Communauté <span class="text-gradient" data-i18n="online.title2">en ligne</span></h2>
+                            <h2 class="section-title-left" data-i18n="online.title">CommunautÃ© <span class="text-gradient" data-i18n="online.title2">en ligne</span></h2>
                         </div>
                     </div>
                     <div class="online-count">
@@ -308,7 +314,7 @@
                 <div class="online-grid" id="onlineAvatars"></div>
                 <div class="online-empty" id="onlineEmpty" style="display:none;">
                     <i class="fas fa-users online-empty-icon"></i>
-                    <span data-i18n="online.first">Soyez le premier à vous connecter !</span>
+                    <span data-i18n="online.first">Soyez le premier Ã  vous connecter !</span>
                 </div>
                 <div class="online-foot">
                     <span class="online-extra" id="onlineExtra"></span>
@@ -322,9 +328,9 @@
     <section class="features" id="features">
         <div class="container">
             <div class="section-header" data-animate="fade-up">
-                <span class="section-badge" data-i18n="features.badge">Fonctionnalités</span>
-                <h2 class="section-title" data-i18n="features.title">Tout ce dont vous avez besoin<br><span class="text-gradient" data-i18n="features.title2">pour évoluer dans la tech</span></h2>
-                <p class="section-desc" data-i18n="features.desc">Une plateforme complète pour la communauté IT algérienne</p>
+                <span class="section-badge" data-i18n="features.badge">FonctionnalitÃ©s</span>
+                <h2 class="section-title" data-i18n="features.title">Tout ce dont vous avez besoin<br><span class="text-gradient" data-i18n="features.title2">pour Ã©voluer dans la tech</span></h2>
+                <p class="section-desc" data-i18n="features.desc">Une plateforme complÃ¨te pour la communautÃ© IT algÃ©rienne</p>
             </div>
             <div class="features-grid">
                 <a href="forum.html" class="feature-card" data-animate="fade-up" data-delay="0">
@@ -332,7 +338,7 @@
                         <i class="fas fa-comments"></i>
                     </div>
                     <h3 data-i18n="features.forumTitle">Forum de discussions</h3>
-                    <p data-i18n="features.forumDesc">Réseau, cybersécurité, bases de données, développement, IA, cloud — posez vos questions et échangez avec des experts de tous les domaines IT.</p>
+                    <p data-i18n="features.forumDesc">RÃ©seau, cybersÃ©curitÃ©, bases de donnÃ©es, dÃ©veloppement, IA, cloud â€” posez vos questions et Ã©changez avec des experts de tous les domaines IT.</p>
                     <span class="feature-link" data-i18n="features.forumLink">Explorer <i class="fas fa-arrow-right"></i></span>
                 </a>
                 <a href="jobs.html" class="feature-card" data-animate="fade-up" data-delay="100">
@@ -340,7 +346,7 @@
                         <i class="fas fa-briefcase"></i>
                     </div>
                     <h3 data-i18n="features.jobsTitle">Offres d'emploi</h3>
-                    <p data-i18n="features.jobsDesc">Développeurs, admin sys, network engineers, DBA, chefs de projet, analystes SI, auditeurs IT — toutes les opportunités sont ici.</p>
+                    <p data-i18n="features.jobsDesc">DÃ©veloppeurs, admin sys, network engineers, DBA, chefs de projet, analystes SI, auditeurs IT â€” toutes les opportunitÃ©s sont ici.</p>
                     <span class="feature-link" data-i18n="features.jobsLink">Voir les offres <i class="fas fa-arrow-right"></i></span>
                 </a>
                 <a href="training.html" class="feature-card" data-animate="fade-up" data-delay="200">
@@ -348,23 +354,23 @@
                         <i class="fas fa-graduation-cap"></i>
                     </div>
                     <h3 data-i18n="features.trainingTitle">Formations gratuites</h3>
-                    <p data-i18n="features.trainingDesc">Certifications (CCNA, AWS, CEH), cours de réseaux, administration système, data science, gestion de projets — du débutant à l'expert.</p>
+                    <p data-i18n="features.trainingDesc">Certifications (CCNA, AWS, CEH), cours de rÃ©seaux, administration systÃ¨me, data science, gestion de projets â€” du dÃ©butant Ã  l'expert.</p>
                     <span class="feature-link" data-i18n="features.trainingLink">Apprendre <i class="fas fa-arrow-right"></i></span>
                 </a>
                 <a href="news.html" class="feature-card" data-animate="fade-up" data-delay="300">
                     <div class="feature-icon amber">
                         <i class="fas fa-newspaper"></i>
                     </div>
-                    <h3 data-i18n="features.newsTitle">Actualités tech</h3>
-                    <p data-i18n="features.newsDesc">Restez informé des tendances IT, des offres d'emploi, des événements et des innovations technologiques en Algérie et dans le monde.</p>
+                    <h3 data-i18n="features.newsTitle">ActualitÃ©s tech</h3>
+                    <p data-i18n="features.newsDesc">Restez informÃ© des tendances IT, des offres d'emploi, des Ã©vÃ©nements et des innovations technologiques en AlgÃ©rie et dans le monde.</p>
                     <span class="feature-link" data-i18n="features.newsLink">Lire <i class="fas fa-arrow-right"></i></span>
                 </a>
                 <a href="events.html" class="feature-card" data-animate="fade-up" data-delay="400">
                     <div class="feature-icon red">
                         <i class="fas fa-calendar-alt"></i>
                     </div>
-                    <h3 data-i18n="features.eventsTitle">Événements</h3>
-                    <p data-i18n="features.eventsDesc">Meetups, conférences, hackathons, ateliers pratiques. Participez ou organisez des événements IT près de chez vous.</p>
+                    <h3 data-i18n="features.eventsTitle">Ã‰vÃ©nements</h3>
+                    <p data-i18n="features.eventsDesc">Meetups, confÃ©rences, hackathons, ateliers pratiques. Participez ou organisez des Ã©vÃ©nements IT prÃ¨s de chez vous.</p>
                     <span class="feature-link" data-i18n="features.eventsLink">Voir <i class="fas fa-arrow-right"></i></span>
                 </a>
                 <a href="profile.html" class="feature-card" data-animate="fade-up" data-delay="500">
@@ -372,7 +378,7 @@
                         <i class="fas fa-network-wired"></i>
                     </div>
                     <h3 data-i18n="features.networkTitle">Networking</h3>
-                    <p data-i18n="features.networkDesc">Connectez-vous avec des professionnels de tous horizons IT, créez votre profil et développez votre réseau professionnel.</p>
+                    <p data-i18n="features.networkDesc">Connectez-vous avec des professionnels de tous horizons IT, crÃ©ez votre profil et dÃ©veloppez votre rÃ©seau professionnel.</p>
                     <span class="feature-link" data-i18n="features.networkingLink">Se connecter <i class="fas fa-arrow-right"></i></span>
                 </a>
             </div>
@@ -385,24 +391,24 @@
             <div class="split-section" data-animate="fade-up">
                 <div class="split-content">
                     <span class="section-badge" data-i18n="forum.badge">Forum</span>
-                    <h2 class="section-title-left" data-i18n="forum.title">Discutez, partagez,<br><span class="text-gradient" data-i18n="forum.title2">résolvez ensemble</span></h2>
-                    <p class="section-desc-left" data-i18n="forum.desc">Notre forum est le cœur de TechDZ. Posez vos questions technique, partagez vos connaissances et aidez les autres.</p>
+                    <h2 class="section-title-left" data-i18n="forum.title">Discutez, partagez,<br><span class="text-gradient" data-i18n="forum.title2">rÃ©solvez ensemble</span></h2>
+                    <p class="section-desc-left" data-i18n="forum.desc">Notre forum est le cÅ“ur de TechDZ. Posez vos questions technique, partagez vos connaissances et aidez les autres.</p>
                     <ul class="feature-list">
                         <li>
                             <i class="fas fa-check-circle"></i>
-                            <span data-i18n="forum.f1">Système de tags et catégories</span>
+                            <span data-i18n="forum.f1">SystÃ¨me de tags et catÃ©gories</span>
                         </li>
                         <li>
                             <i class="fas fa-check-circle"></i>
-                            <span data-i18n="forum.f2">Votes et réponses acceptées</span>
+                            <span data-i18n="forum.f2">Votes et rÃ©ponses acceptÃ©es</span>
                         </li>
                         <li>
                             <i class="fas fa-check-circle"></i>
-                            <span data-i18n="forum.f3">Badges de réputation</span>
+                            <span data-i18n="forum.f3">Badges de rÃ©putation</span>
                         </li>
                         <li>
                             <i class="fas fa-check-circle"></i>
-                            <span data-i18n="forum.f4">Recherche avancée</span>
+                            <span data-i18n="forum.f4">Recherche avancÃ©e</span>
                         </li>
                         <li>
                             <i class="fas fa-check-circle"></i>
@@ -427,8 +433,8 @@
         <div class="container">
             <div class="section-header" data-animate="fade-up">
                 <span class="section-badge" data-i18n="jobs.badge">Emplois</span>
-                <h2 class="section-title" data-i18n="jobs.title">Trouvez votre prochain <span class="text-gradient" data-i18n="jobs.title2">poste en Algérie</span></h2>
-                <p class="section-desc" data-i18n="jobs.desc">Des centaines d'offres vérifiées d'entreprises algériennes et internationales</p>
+                <h2 class="section-title" data-i18n="jobs.title">Trouvez votre prochain <span class="text-gradient" data-i18n="jobs.title2">poste en AlgÃ©rie</span></h2>
+                <p class="section-desc" data-i18n="jobs.desc">Des centaines d'offres vÃ©rifiÃ©es d'entreprises algÃ©riennes et internationales</p>
             </div>
             <div class="jobs-grid" id="homeJobsGrid">
                 <div class="loading" style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> <span data-i18n="jobs.loading">Chargement des offres...</span></div>
@@ -447,7 +453,7 @@
             <div class="section-header" data-animate="fade-up">
                 <span class="section-badge" data-i18n="training.badge">Formations</span>
                 <h2 class="section-title" data-i18n="training.title">Apprenez <span class="text-gradient" data-i18n="training.title2">gratuitement</span></h2>
-                <p class="section-desc" data-i18n="training.desc">Cours, tutoriels et ressources partagés par la communauté</p>
+                <p class="section-desc" data-i18n="training.desc">Cours, tutoriels et ressources partagÃ©s par la communautÃ©</p>
             </div>
             <div class="training-grid" id="homeTrainingGrid">
                 <div class="loading" style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> <span data-i18n="training.loading">Chargement des formations...</span></div>
@@ -459,8 +465,8 @@
     <section class="news-section" id="news">
         <div class="container">
             <div class="section-header" data-animate="fade-up">
-                <span class="section-badge" data-i18n="news.badge">Actualités</span>
-                <h2 class="section-title" data-i18n="news.title">Restez à jour avec <span class="text-gradient" data-i18n="news.title2">la tech</span></h2>
+                <span class="section-badge" data-i18n="news.badge">ActualitÃ©s</span>
+                <h2 class="section-title" data-i18n="news.title">Restez Ã  jour avec <span class="text-gradient" data-i18n="news.title2">la tech</span></h2>
             </div>
             <div class="news-grid" id="homeNewsGrid">
                 <div class="loading" style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> <span data-i18n="news.loading">Chargement...</span></div>
@@ -472,12 +478,12 @@
     <section class="events-section" id="events">
         <div class="container">
             <div class="section-header" data-animate="fade-up">
-                <span class="section-badge" data-i18n="events.badge">Événements</span>
-                <h2 class="section-title" data-i18n="events.title">Rencontrez la <span class="text-gradient" data-i18n="events.title2">communauté</span></h2>
-                <p class="section-desc" data-i18n="events.desc">Meetups, conférences et hackathons à travers l'Algérie</p>
+                <span class="section-badge" data-i18n="events.badge">Ã‰vÃ©nements</span>
+                <h2 class="section-title" data-i18n="events.title">Rencontrez la <span class="text-gradient" data-i18n="events.title2">communautÃ©</span></h2>
+                <p class="section-desc" data-i18n="events.desc">Meetups, confÃ©rences et hackathons Ã  travers l'AlgÃ©rie</p>
             </div>
             <div class="events-grid" id="homeEventsGrid">
-                <div class="loading" style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> <span data-i18n="events.loading">Chargement des événements...</span></div>
+                <div class="loading" style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted);"><i class="fas fa-spinner fa-spin"></i> <span data-i18n="events.loading">Chargement des Ã©vÃ©nements...</span></div>
             </div>
         </div>
     </section>
@@ -488,7 +494,7 @@
             <div class="cta-card" data-animate="fade-up">
                 <div class="cta-content">
                     <h2 data-i18n="cta.title">Rejoignez TechDZ aujourd'hui</h2>
-                    <p data-i18n="cta.desc">Créez votre compte gratuitement et faites partie de la plus grande communauté IT d'Algérie.</p>
+                    <p data-i18n="cta.desc">CrÃ©ez votre compte gratuitement et faites partie de la plus grande communautÃ© IT d'AlgÃ©rie.</p>
                     <form class="register-form" id="ctaRegisterForm">
                         <div class="form-group">
                             <input type="text" placeholder="Votre nom complet" data-i18n-placeholder="cta.name" id="ctaName">
@@ -497,7 +503,7 @@
                             <input type="email" placeholder="Votre email" data-i18n-placeholder="cta.email" id="ctaEmail">
                         </div>
                         <button type="submit" class="btn btn-primary btn-lg btn-full">
-                            <i class="fas fa-rocket"></i> <span data-i18n="cta.submit">Créer mon compte</span>
+                            <i class="fas fa-rocket"></i> <span data-i18n="cta.submit">CrÃ©er mon compte</span>
                         </button>
                     </form>
                     <p class="cta-note" data-i18n="cta.note">Gratuit, sans carte bancaire. Rejoignez 5,000+ membres.</p>
@@ -546,7 +552,7 @@
             <div class="footer-grid">
                 <div class="footer-brand">
                     <img src="assets/img/logo.svg" alt="TechDZ" height="28">
-                    <p data-i18n="footer.desc">La communauté IT d'Algérie. Ensemble, nous apprenons, partageons et évoluons.</p>
+                    <p data-i18n="footer.desc">La communautÃ© IT d'AlgÃ©rie. Ensemble, nous apprenons, partageons et Ã©voluons.</p>
                     <div class="social-links">
                         <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
                         <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
@@ -555,16 +561,16 @@
                     </div>
                 </div>
                 <div class="footer-col">
-                    <h4 data-i18n="footer.community">Communauté</h4>
+                    <h4 data-i18n="footer.community">CommunautÃ©</h4>
                     <a href="forum.html" data-i18n="footer.forum">Forum</a>
-                    <a href="events.html" data-i18n="footer.events">Événements</a>
+                    <a href="events.html" data-i18n="footer.events">Ã‰vÃ©nements</a>
                     <a href="networking.html" data-i18n="footer.members">Membres</a>
                     <a href="#" data-i18n="footer.discord">Discord</a>
                 </div>
                 <div class="footer-col">
                     <h4 data-i18n="footer.resources">Ressources</h4>
                     <a href="training.html" data-i18n="footer.training">Formations</a>
-                    <a href="news.html" data-i18n="footer.news">Actualités</a>
+                    <a href="news.html" data-i18n="footer.news">ActualitÃ©s</a>
                     <a href="#" data-i18n="footer.blog">Blog</a>
                     <a href="#" data-i18n="footer.docs">Documentation</a>
                 </div>
@@ -575,16 +581,16 @@
                     <a href="#" data-i18n="footer.freelance">Freelance</a>
                 </div>
                 <div class="footer-col">
-                    <h4 data-i18n="footer.about">À propos</h4>
+                    <h4 data-i18n="footer.about">Ã€ propos</h4>
                     <a href="#" data-i18n="footer.aboutUs">Qui sommes-nous</a>
                     <a href="#" data-i18n="footer.contact">Contact</a>
                     <a href="#" data-i18n="footer.terms">Conditions</a>
-                    <a href="#" data-i18n="footer.privacy">Confidentialité</a>
+                    <a href="#" data-i18n="footer.privacy">ConfidentialitÃ©</a>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p data-i18n="footer.copyright">© 2026 TechDZ. Tous droits réservés.</p>
-                <p data-i18n="footer.madeIn">Fait avec ❤️ en Algérie</p>
+                <p data-i18n="footer.copyright">Â© 2026 TechDZ. Tous droits rÃ©servÃ©s.</p>
+                <p data-i18n="footer.madeIn">Fait avec â¤ï¸ en AlgÃ©rie</p>
             </div>
         </div>
     </footer>
@@ -595,15 +601,15 @@
     <script src="assets/js/db.js?v=20260807"></script>
     <script src="assets/js/translations.js?v=20260807"></script>
     <script src="assets/js/i18n.js?v=20260807"></script>
-    <script src="assets/js/script.js?v=20260807"></script>
+    <script src="assets/js/script.js?v=20260818"></script>
 
     <script src="assets/js/widgets.js?v=20260807"></script>
     <script>
     (async () => {
-        const catColors = { 'Réseaux & Telecom': 'blue', 'Cybersécurité': 'red', 'Administration Système': 'green', 'Développement': 'purple', 'Bases de Données': 'amber', 'Data Science & IA': 'teal', 'UI/UX Design': 'pink', 'Gestion de Projet IT': 'orange', 'Emploi & Carrière': 'cyan', 'Général': 'gray' };
-        const catIcons = { 'Réseaux & Telecom': 'fas fa-network-wired', 'Cybersécurité': 'fas fa-shield-alt', 'Administration Système': 'fab fa-linux', 'Développement': 'fas fa-code', 'Bases de Données': 'fas fa-database', 'Data Science & IA': 'fas fa-brain', 'UI/UX Design': 'fas fa-palette', 'Gestion de Projet IT': 'fas fa-tasks', 'Emploi & Carrière': 'fas fa-briefcase', 'Général': 'fas fa-comments' };
-        const courseIconMap = { 'Réseaux': 'fas fa-network-wired', 'Système': 'fab fa-linux', 'Cybersécurité': 'fas fa-shield-alt', 'Développement': 'fas fa-code', 'Data': 'fas fa-brain', 'Design': 'fas fa-palette', 'Gestion': 'fas fa-tasks' };
-        const courseColorMap = { 'Réseaux': 'blue', 'Système': 'green', 'Cybersécurité': 'red', 'Développement': 'purple', 'Data': 'teal', 'Design': 'amber', 'Gestion': 'blue' };
+        const catColors = { 'RÃ©seaux & Telecom': 'blue', 'CybersÃ©curitÃ©': 'red', 'Administration SystÃ¨me': 'green', 'DÃ©veloppement': 'purple', 'Bases de DonnÃ©es': 'amber', 'Data Science & IA': 'teal', 'UI/UX Design': 'pink', 'Gestion de Projet IT': 'orange', 'Emploi & CarriÃ¨re': 'cyan', 'GÃ©nÃ©ral': 'gray' };
+        const catIcons = { 'RÃ©seaux & Telecom': 'fas fa-network-wired', 'CybersÃ©curitÃ©': 'fas fa-shield-alt', 'Administration SystÃ¨me': 'fab fa-linux', 'DÃ©veloppement': 'fas fa-code', 'Bases de DonnÃ©es': 'fas fa-database', 'Data Science & IA': 'fas fa-brain', 'UI/UX Design': 'fas fa-palette', 'Gestion de Projet IT': 'fas fa-tasks', 'Emploi & CarriÃ¨re': 'fas fa-briefcase', 'GÃ©nÃ©ral': 'fas fa-comments' };
+        const courseIconMap = { 'RÃ©seaux': 'fas fa-network-wired', 'SystÃ¨me': 'fab fa-linux', 'CybersÃ©curitÃ©': 'fas fa-shield-alt', 'DÃ©veloppement': 'fas fa-code', 'Data': 'fas fa-brain', 'Design': 'fas fa-palette', 'Gestion': 'fas fa-tasks' };
+        const courseColorMap = { 'RÃ©seaux': 'blue', 'SystÃ¨me': 'green', 'CybersÃ©curitÃ©': 'red', 'DÃ©veloppement': 'purple', 'Data': 'teal', 'Design': 'amber', 'Gestion': 'blue' };
         const eventIcons = { meetup: 'fas fa-users', workshop: 'fas fa-tools', conference: 'fas fa-microphone', hackathon: 'fas fa-terminal', webinar: 'fas fa-video' };
         const monthNames = t('common.monthShort');
         const badgeLabels = { tech: t('news.badgeTech'), community: t('news.badgeCommunity'), event: t('news.badgeEvent'), alert: t('news.badgeAlert') };
@@ -619,8 +625,8 @@
             return days + t('common.day');
         }
 
-        // 1. Load Stats — chaque compteur est isolé : si une requête échoue,
-        // les autres affichent quand même les vraies données.
+        // 1. Load Stats â€” chaque compteur est isolÃ© : si une requÃªte Ã©choue,
+        // les autres affichent quand mÃªme les vraies donnÃ©es.
         const safeCount = async (q) => {
             try {
                 const { count } = await q();
@@ -645,14 +651,14 @@
             } catch (e2) { console.error('Stats fallback error:', e2.message); }
         }
 
-        // 1b. Hero dynamique — badge (vrai nombre de membres)
+        // 1b. Hero dynamique â€” badge (vrai nombre de membres)
         try {
             const badge = document.getElementById('heroBadgeCount');
             if (badge && members > 0) badge.textContent = '+' + members.toLocaleString();
         } catch (e) { console.error('Hero badge error:', e); }
 
-        // 1c. Hero dynamique — cartes : données aléatoires de la base, positions
-        // en escalier superposées, et chaque carte passe au premier plan à tour de rôle.
+        // 1c. Hero dynamique â€” cartes : donnÃ©es alÃ©atoires de la base, positions
+        // en escalier superposÃ©es, et chaque carte passe au premier plan Ã  tour de rÃ´le.
         const HERO_SLOTS = [
             { top: '15px', left: '0', rotate: '-4deg', width: '320px', zIndex: 3 },
             { top: '165px', left: '150px', rotate: '2.5deg', width: '320px', zIndex: 2 },
@@ -681,14 +687,14 @@
                 const event = pickRandom(eventRes.data, lastPick.event, 'id');
                 lastPick = { member: member?.id || null, post: post?.id || null, event: event?.id || null };
 
-                // Carte 1 — membre aléatoire
+                // Carte 1 â€” membre alÃ©atoire
                 if (member) {
                     const initials = (member.full_name || 'U').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
                     document.getElementById('heroCard1Avatar').textContent = initials;
                     document.getElementById('heroCard1Name').textContent = member.full_name;
                     document.getElementById('heroCard1Role').textContent = member.job_title || t('common.member');
                     const since = new Date(member.created_at);
-                    document.getElementById('heroCard1Text').textContent = `"${member.city || 'Algérie'} · ${t('common.since')} ${since.getDate()} ${monthNames[since.getMonth()]} ${since.getFullYear()}"`;
+                    document.getElementById('heroCard1Text').textContent = `"${member.city || 'AlgÃ©rie'} Â· ${t('common.since')} ${since.getDate()} ${monthNames[since.getMonth()]} ${since.getFullYear()}"`;
                     const skills = (member.skills || []).slice(0, 3);
                     const skillBox = document.getElementById('heroCard1Skills');
                     skillBox.style.display = '';
@@ -699,7 +705,7 @@
                     }
                 }
 
-                // Carte 2 — discussion aléatoire
+                // Carte 2 â€” discussion alÃ©atoire
                 if (post) {
                     const author = post.author || {};
                     document.getElementById('heroCard2Avatar').textContent = (author.full_name || 'U')[0].toUpperCase();
@@ -715,7 +721,7 @@
                         </div>`;
                 }
 
-                // Carte 3 — événement aléatoire
+                // Carte 3 â€” Ã©vÃ©nement alÃ©atoire
                 if (event) {
                     const d = new Date(event.event_date);
                     document.getElementById('heroCard3Day').textContent = d.getDate();
@@ -729,7 +735,7 @@
             } catch (e) { console.error('Hero cards error:', e); return false; }
         }
 
-        // 1d. Positions en escalier, mélangées aléatoirement (desktop uniquement)
+        // 1d. Positions en escalier, mÃ©langÃ©es alÃ©atoirement (desktop uniquement)
         function shuffleHeroSlots() {
             const cards = document.querySelectorAll('.hero-card');
             if (cards.length !== 3 || window.innerWidth <= 1024) return;
@@ -755,7 +761,7 @@
             });
         }
 
-        // 1e. Premier plan tournant : chaque carte passe devant les autres à tour de rôle
+        // 1e. Premier plan tournant : chaque carte passe devant les autres Ã  tour de rÃ´le
         let heroActiveIdx = -1;
         function heroCycle() {
             const cards = document.querySelectorAll('.hero-card');
@@ -876,7 +882,7 @@
                             <div class="course-meta">
                                 ${c.duration_hours ? `<span><i class="fas fa-clock"></i> ${c.duration_hours}h</span>` : ''}
                                 <span><i class="fas fa-users"></i> ${c.enrollment_count || 0}</span>
-                                <span><i class="fas fa-star"></i> ${c.rating || '—'}</span>
+                                <span><i class="fas fa-star"></i> ${c.rating || 'â€”'}</span>
                             </div>
                         </div>
                     </div>`;
@@ -953,13 +959,13 @@
     <script src="assets/js/effects/hero-animation.js?v=20260807" defer></script>
     <script src="assets/js/effects/themes.js" defer data-base=""></script>
 
-    <!-- Modale vidéo de présentation -->
-    <div class="video-modal" id="videoModal" aria-hidden="true" role="dialog" aria-modal="true" data-i18n-aria="video.title" aria-label="TechDZ — présentation">
+    <!-- Modale vidÃ©o de prÃ©sentation -->
+    <div class="video-modal" id="videoModal" aria-hidden="true" role="dialog" aria-modal="true" data-i18n-aria="video.title" aria-label="TechDZ â€” prÃ©sentation">
         <div class="video-modal-backdrop" data-video-close></div>
         <div class="video-modal-card">
             <button class="video-modal-close" data-video-close data-i18n-aria="common.close" aria-label="Fermer"><i class="fas fa-times"></i></button>
             <div class="video-modal-frame">
-                <iframe id="videoFrame" src="" title="TechDZ — présentation" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <iframe id="videoFrame" src="" title="TechDZ â€” prÃ©sentation" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
         </div>
     </div>
