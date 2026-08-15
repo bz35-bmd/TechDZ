@@ -316,25 +316,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ==========================================
-  // Theme Toggle
+  // Theme Toggle (switch soleil / lune)
   // ==========================================
   const themeToggle = document.getElementById('themeToggle');
   if (themeToggle) {
-    const themeIcon = themeToggle.querySelector('i');
-    const savedTheme = localStorage.getItem('techdz-theme') || 'light';
-    html.setAttribute('data-theme', savedTheme);
-    updateThemeIcon(savedTheme);
+    const savedTheme = localStorage.getItem('techdz-theme');
+    const validTheme = (savedTheme === 'dark' || savedTheme === 'light') ? savedTheme : 'light';
+    html.setAttribute('data-theme', validTheme);
+    updateThemeSwitch();
 
     themeToggle.addEventListener('click', () => {
       const current = html.getAttribute('data-theme');
       const next = current === 'dark' ? 'light' : 'dark';
       html.setAttribute('data-theme', next);
       localStorage.setItem('techdz-theme', next);
-      updateThemeIcon(next);
+      updateThemeSwitch();
     });
 
-    function updateThemeIcon(theme) {
-      themeIcon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    function updateThemeSwitch() {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      themeToggle.setAttribute('aria-checked', isDark ? 'true' : 'false');
     }
   }
 
@@ -416,6 +417,47 @@ document.addEventListener('DOMContentLoaded', () => {
     if (mobileOverlay) mobileOverlay.addEventListener('click', closeMobileNav);
     document.querySelectorAll('.mobile-link').forEach(link => link.addEventListener('click', closeMobileNav));
   }
+
+  // ==========================================
+  // Contrôles navbar → menu mobile
+  // (switch thème, palettes, animation, loupe, badge online).
+  // Seuls le logo et le drapeau (langue) restent dans la barre sur mobile.
+  // ==========================================
+  const navActionsEl = document.querySelector('.navbar .nav-actions');
+  const mobileNavControls = document.getElementById('mobileNavControls');
+  const mobileCtlMq = window.matchMedia('(max-width: 768px)');
+  const isMobileControl = el => el && (
+    el.id === 'themeToggle' ||
+    el.classList.contains('theme-picker') ||
+    el.classList.contains('nav-search-icon') ||
+    el.classList.contains('online-badge')
+  );
+  const ctlOrder = navActionsEl ? Array.from(navActionsEl.children).filter(isMobileControl) : [];
+
+  function relocateMobileControls() {
+    if (!navActionsEl || !mobileNavControls) return;
+    if (mobileCtlMq.matches) {
+      Array.from(navActionsEl.children).filter(isMobileControl).forEach(el => mobileNavControls.appendChild(el));
+    } else {
+      const lang = navActionsEl.querySelector(':scope > .lang-switcher');
+      Array.from(mobileNavControls.children)
+        .sort((a, b) => ctlOrder.indexOf(a) - ctlOrder.indexOf(b))
+        .forEach(el => {
+          if (lang) navActionsEl.insertBefore(el, lang);
+          else navActionsEl.appendChild(el);
+        });
+    }
+  }
+
+  relocateMobileControls();
+  if (navActionsEl) {
+    new MutationObserver(relocateMobileControls).observe(navActionsEl, { childList: true });
+  }
+  let ctlResizeT = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(ctlResizeT);
+    ctlResizeT = setTimeout(relocateMobileControls, 150);
+  });
 
   // ==========================================
   // Modale vidéo de présentation ("Découvrir" → défilement + vidéo autoplay)
